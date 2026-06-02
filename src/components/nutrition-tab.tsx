@@ -60,18 +60,18 @@ export function NutritionTab() {
         <button
           aria-label="Previous day"
           onClick={() => setDateStr(addDays(dateStr, -1))}
-          className="flex h-10 w-10 items-center justify-center rounded-lg border border-stone-200 bg-white text-stone-600 transition-colors hover:bg-stone-50 active:bg-stone-100"
+          className="flex h-10 w-10 items-center justify-center rounded-lg border border-border bg-card text-muted-foreground transition-colors hover:bg-secondary active:bg-secondary"
         >
           <ChevronLeft className="h-5 w-5" />
         </button>
-        <span className="text-sm font-semibold text-stone-800">
+        <span className="text-sm font-semibold text-foreground">
           {formatFriendly(dateStr, todayStr)}
         </span>
         <button
           aria-label="Next day"
           disabled={atToday}
           onClick={() => setDateStr(addDays(dateStr, 1))}
-          className="flex h-10 w-10 items-center justify-center rounded-lg border border-stone-200 bg-white text-stone-600 transition-colors hover:bg-stone-50 active:bg-stone-100 disabled:opacity-30"
+          className="flex h-10 w-10 items-center justify-center rounded-lg border border-border bg-card text-muted-foreground transition-colors hover:bg-secondary active:bg-secondary disabled:opacity-30"
         >
           <ChevronRight className="h-5 w-5" />
         </button>
@@ -102,11 +102,11 @@ function ProteinCard({ dateStr }: { dateStr: string }) {
   return (
     <Card className="space-y-4 p-5">
       <div className="flex items-center gap-2">
-        <Beef className="h-4 w-4 text-violet-600" />
-        <h2 className="text-sm font-semibold text-stone-900">Protein</h2>
+        <Beef className="h-4 w-4 text-violet-400" />
+        <h2 className="text-sm font-semibold text-foreground">Protein</h2>
         <button
           onClick={() => setEditingTarget((v) => !v)}
-          className="ml-auto inline-flex items-center gap-1 text-xs font-medium text-stone-500 hover:text-stone-800"
+          className="ml-auto inline-flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-foreground"
         >
           <Pencil className="h-3 w-3" /> Target {target}g
         </button>
@@ -132,7 +132,7 @@ function ProteinCard({ dateStr }: { dateStr: string }) {
           <button
             key={g}
             onClick={() => add(g)}
-            className="h-10 rounded-lg bg-violet-50 px-3 text-sm font-semibold text-violet-700 transition-colors hover:bg-violet-100 active:bg-violet-200"
+            className="h-10 rounded-lg bg-violet-500/15 px-3 text-sm font-semibold text-violet-300 transition-colors hover:bg-violet-500/25 active:bg-violet-500/35"
           >
             +{g}g
           </button>
@@ -142,7 +142,7 @@ function ProteinCard({ dateStr }: { dateStr: string }) {
       {/* Custom add */}
       <div className="flex items-end gap-2">
         <div className="flex-1">
-          <span className="mb-1 block text-[10px] font-medium uppercase tracking-wide text-stone-400">
+          <span className="mb-1 block text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
             Custom
           </span>
           <NumberStepper
@@ -167,18 +167,18 @@ function ProteinCard({ dateStr }: { dateStr: string }) {
 
       {/* Entries */}
       {day.proteinEntries.length > 0 && (
-        <ul className="space-y-1 border-t border-stone-100 pt-3">
+        <ul className="space-y-1 border-t border-border pt-3">
           {day.proteinEntries.map((e, i) => (
             <li
               key={i}
-              className="flex items-center gap-2 text-sm text-stone-700"
+              className="flex items-center gap-2 text-sm text-foreground/90"
             >
               <span className="font-medium tabular-nums">{e.grams}g</span>
-              <span className="text-xs text-stone-400">{timeOf(e.time)}</span>
+              <span className="text-xs text-muted-foreground">{timeOf(e.time)}</span>
               <button
                 onClick={() => store.removeProtein(dateStr, i)}
                 aria-label="Remove entry"
-                className="ml-auto flex h-8 w-8 items-center justify-center rounded-md text-stone-300 hover:bg-stone-100 hover:text-stone-600"
+                className="ml-auto flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:bg-secondary hover:text-muted-foreground"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -187,7 +187,7 @@ function ProteinCard({ dateStr }: { dateStr: string }) {
         </ul>
       )}
 
-      <p className="text-xs leading-relaxed text-stone-500">
+      <p className="text-xs leading-relaxed text-muted-foreground">
         Protein first — it protects muscle in a deficit and keeps you full.
       </p>
     </Card>
@@ -210,7 +210,7 @@ function ProteinRing({ total, target }: { total: number; target: number }) {
           cy={size / 2}
           r={r}
           fill="none"
-          stroke="#e7e5e4"
+          stroke="#26262b"
           strokeWidth={stroke}
         />
         <circle
@@ -218,7 +218,7 @@ function ProteinRing({ total, target }: { total: number; target: number }) {
           cy={size / 2}
           r={r}
           fill="none"
-          stroke={hit ? "#16a34a" : "#7c3aed"}
+          stroke={hit ? "#34d399" : "#a78bfa"}
           strokeWidth={stroke}
           strokeLinecap="round"
           strokeDasharray={c}
@@ -227,10 +227,10 @@ function ProteinRing({ total, target }: { total: number; target: number }) {
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-3xl font-semibold tabular-nums text-stone-900">
+        <span className="text-3xl font-semibold tabular-nums text-foreground">
           {total}
         </span>
-        <span className="text-xs text-stone-400">of {target}g</span>
+        <span className="text-xs text-muted-foreground">of {target}g</span>
       </div>
     </div>
   );
@@ -255,9 +255,9 @@ function TargetEditor({
   };
 
   return (
-    <div className="space-y-3 rounded-xl border border-stone-200 bg-stone-50 p-3">
+    <div className="space-y-3 rounded-xl border border-border bg-secondary p-3">
       <div>
-        <span className="mb-1 block text-[10px] font-medium uppercase tracking-wide text-stone-400">
+        <span className="mb-1 block text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
           Daily target (grams)
         </span>
         <NumberStepper
@@ -269,7 +269,7 @@ function TargetEditor({
         />
       </div>
       <div>
-        <span className="mb-1 block text-[10px] font-medium uppercase tracking-wide text-stone-400">
+        <span className="mb-1 block text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
           …or set from body weight (lb) — suggests ~0.8 g/lb
         </span>
         <div className="flex gap-2">
@@ -285,7 +285,7 @@ function TargetEditor({
           <Button
             variant="outline"
             onClick={fromBw}
-            className="h-11 border-stone-200 px-3 text-stone-600"
+            className="h-11 border-border px-3 text-muted-foreground"
           >
             Suggest
           </Button>
@@ -307,9 +307,9 @@ function WaterCard({ dateStr, water }: { dateStr: string; water: number }) {
   return (
     <Card className="space-y-3 p-5">
       <div className="flex items-center gap-2">
-        <Droplet className="h-4 w-4 text-cyan-600" />
-        <h2 className="text-sm font-semibold text-stone-900">Water</h2>
-        <span className="ml-auto text-sm font-medium tabular-nums text-stone-500">
+        <Droplet className="h-4 w-4 text-cyan-400" />
+        <h2 className="text-sm font-semibold text-foreground">Water</h2>
+        <span className="ml-auto text-sm font-medium tabular-nums text-muted-foreground">
           {water} / {WATER_GOAL} cups
         </span>
       </div>
@@ -325,8 +325,8 @@ function WaterCard({ dateStr, water }: { dateStr: string; water: number }) {
               className={cn(
                 "h-10 flex-1 rounded-lg border transition-colors",
                 filled
-                  ? "border-cyan-300 bg-cyan-100"
-                  : "border-stone-200 bg-white hover:bg-stone-50",
+                  ? "border-cyan-500/40 bg-cyan-500/20"
+                  : "border-border bg-card hover:bg-secondary",
               )}
             />
           );
@@ -338,7 +338,7 @@ function WaterCard({ dateStr, water }: { dateStr: string; water: number }) {
           variant="outline"
           onClick={() => store.setWater(dateStr, water - 1)}
           disabled={water <= 0}
-          className="h-10 flex-1 border-stone-200"
+          className="h-10 flex-1 border-border"
         >
           − Cup
         </Button>
@@ -366,7 +366,7 @@ function SugarCard({
   const store = useStore();
   return (
     <Card className="space-y-3 p-5">
-      <h2 className="text-sm font-semibold text-stone-900">Added sugar</h2>
+      <h2 className="text-sm font-semibold text-foreground">Added sugar</h2>
 
       <button
         onClick={() => {
@@ -377,8 +377,8 @@ function SugarCard({
         className={cn(
           "flex w-full items-center gap-3 rounded-xl border p-3 text-left transition-colors",
           lowSugar === true
-            ? "border-emerald-200 bg-emerald-50"
-            : "border-stone-200 bg-white hover:bg-stone-50",
+            ? "border-emerald-500/30 bg-emerald-500/10"
+            : "border-border bg-card hover:bg-secondary",
         )}
       >
         <span
@@ -386,33 +386,33 @@ function SugarCard({
             "flex h-6 w-6 shrink-0 items-center justify-center rounded-full border",
             lowSugar === true
               ? "border-emerald-600 bg-emerald-600 text-white"
-              : "border-stone-300 bg-white",
+              : "border-zinc-600 bg-card",
           )}
         >
           {lowSugar === true && <span className="text-xs">✓</span>}
         </span>
-        <span className="text-sm font-medium text-stone-800">
+        <span className="text-sm font-medium text-foreground">
           Kept added sugar low today
         </span>
       </button>
 
-      <div className="flex items-center justify-between gap-2 rounded-xl border border-stone-100 bg-stone-50/60 px-3 py-2">
-        <span className="text-xs text-stone-500">Sugary items (optional)</span>
+      <div className="flex items-center justify-between gap-2 rounded-xl border border-border bg-secondary/40 px-3 py-2">
+        <span className="text-xs text-muted-foreground">Sugary items (optional)</span>
         <div className="flex items-center gap-2">
           <button
             onClick={() => store.setSugarTally(dateStr, tally - 1)}
             disabled={tally <= 0}
-            className="flex h-9 w-9 items-center justify-center rounded-lg border border-stone-200 bg-white text-stone-600 disabled:opacity-30"
+            className="flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-card text-muted-foreground disabled:opacity-30"
             aria-label="Decrease sugary items"
           >
             −
           </button>
-          <span className="w-6 text-center text-sm font-semibold tabular-nums text-stone-800">
+          <span className="w-6 text-center text-sm font-semibold tabular-nums text-foreground">
             {tally}
           </span>
           <button
             onClick={() => store.setSugarTally(dateStr, tally + 1)}
-            className="flex h-9 w-9 items-center justify-center rounded-lg border border-stone-200 bg-white text-stone-600"
+            className="flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-card text-muted-foreground"
             aria-label="Increase sugary items"
           >
             +
@@ -420,7 +420,7 @@ function SugarCard({
         </div>
       </div>
 
-      <p className="text-xs leading-relaxed text-stone-500">
+      <p className="text-xs leading-relaxed text-muted-foreground">
         Cutting added sugar is your single biggest lever.
       </p>
     </Card>
@@ -442,7 +442,7 @@ function CaloriesCard({
     <Card className="p-4">
       <button
         onClick={() => setOpen((v) => !v)}
-        className="flex w-full items-center gap-2 text-sm font-medium text-stone-600"
+        className="flex w-full items-center gap-2 text-sm font-medium text-muted-foreground"
       >
         <ChevronDown
           className={cn("h-4 w-4 transition-transform", open && "rotate-180")}
@@ -453,7 +453,7 @@ function CaloriesCard({
       {open && (
         <div className="mt-3 flex items-end gap-2">
           <div className="flex-1">
-            <span className="mb-1 block text-[10px] font-medium uppercase tracking-wide text-stone-400">
+            <span className="mb-1 block text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
               Calories today
             </span>
             <NumberStepper
@@ -470,7 +470,7 @@ function CaloriesCard({
             <Button
               variant="outline"
               onClick={() => store.setCalories(dateStr, null)}
-              className="h-11 border-stone-200 px-3 text-stone-500"
+              className="h-11 border-border px-3 text-muted-foreground"
             >
               Clear
             </Button>

@@ -71,10 +71,10 @@ export function ProgressTab() {
   return (
     <div className="space-y-6">
       <header className="space-y-1">
-        <h1 className="text-2xl font-semibold tracking-tight text-stone-900">
+        <h1 className="text-2xl font-semibold tracking-tight text-foreground">
           Progress
         </h1>
-        <p className="text-sm text-stone-500">
+        <p className="text-sm text-muted-foreground">
           Week {week} · {prog.label}
         </p>
       </header>
@@ -82,8 +82,8 @@ export function ProgressTab() {
       {/* This week checklist */}
       <section className="space-y-3">
         <div className="flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-stone-900">This week</h2>
-          <span className="text-xs font-medium text-stone-500">
+          <h2 className="text-sm font-semibold text-foreground">This week</h2>
+          <span className="text-xs font-medium text-muted-foreground">
             {completedCount} / {trainingSessions.length} done
           </span>
         </div>
@@ -100,7 +100,7 @@ export function ProgressTab() {
                       "flex h-5 w-5 shrink-0 items-center justify-center rounded-full",
                       done
                         ? "bg-emerald-600 text-white"
-                        : "border border-stone-200 bg-white",
+                        : "border border-border bg-card",
                     )}
                   >
                     {done && <Check className="h-3 w-3" />}
@@ -108,7 +108,7 @@ export function ProgressTab() {
                   <span
                     className={cn(
                       "text-sm",
-                      done ? "text-stone-400 line-through" : "text-stone-700",
+                      done ? "text-muted-foreground line-through" : "text-foreground/90",
                     )}
                   >
                     {cat === "intervals" ? "Intervals" : s.name}
@@ -126,10 +126,10 @@ export function ProgressTab() {
 
       {/* Lifts */}
       <section className="space-y-3">
-        <h2 className="text-sm font-semibold text-stone-900">Lifts</h2>
+        <h2 className="text-sm font-semibold text-foreground">Lifts</h2>
         {liftGroups.map((group) => (
           <div key={group.title} className="space-y-2">
-            <p className="text-xs font-medium uppercase tracking-wide text-stone-400">
+            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
               {group.title}
             </p>
             {group.exercises.map((ex) => (
@@ -155,7 +155,7 @@ function NutritionGlance({ todayStr }: { todayStr: string | null }) {
   if (!todayStr) {
     return (
       <section className="space-y-3">
-        <h2 className="text-sm font-semibold text-stone-900">Nutrition</h2>
+        <h2 className="text-sm font-semibold text-foreground">Nutrition</h2>
         <Skeleton className="h-28 w-full" />
       </section>
     );
@@ -183,12 +183,12 @@ function NutritionGlance({ todayStr }: { todayStr: string | null }) {
   const lines: { icon: typeof Beef; tint: string; text: string }[] = [
     {
       icon: Beef,
-      tint: "text-violet-600",
+      tint: "text-violet-400",
       text: `Protein goal hit ${proteinHits}/7 days`,
     },
     {
       icon: Droplet,
-      tint: "text-cyan-600",
+      tint: "text-cyan-400",
       text:
         waterStreak > 0
           ? `Water goal: ${waterStreak}-day streak`
@@ -196,7 +196,7 @@ function NutritionGlance({ todayStr }: { todayStr: string | null }) {
     },
     {
       icon: CandyOff,
-      tint: "text-emerald-600",
+      tint: "text-emerald-400",
       text:
         sugarStreak > 0
           ? `Low added sugar: ${sugarStreak}-day streak`
@@ -206,12 +206,12 @@ function NutritionGlance({ todayStr }: { todayStr: string | null }) {
 
   return (
     <section className="space-y-3">
-      <h2 className="text-sm font-semibold text-stone-900">Nutrition</h2>
+      <h2 className="text-sm font-semibold text-foreground">Nutrition</h2>
       <Card className="space-y-2.5 p-4">
         {lines.map((l) => (
           <div key={l.text} className="flex items-center gap-2.5">
             <l.icon className={cn("h-4 w-4 shrink-0", l.tint)} />
-            <span className="text-sm text-stone-700">{l.text}</span>
+            <span className="text-sm text-foreground/90">{l.text}</span>
           </div>
         ))}
       </Card>
@@ -237,28 +237,28 @@ function LiftRow({ exercise, logs }: { exercise: Exercise; logs: SetLog[] }) {
   return (
     <Card className="p-3.5">
       <div className="flex items-center justify-between gap-3">
-        <span className="text-sm font-medium text-stone-800">
+        <span className="text-sm font-medium text-foreground">
           {exercise.name}
         </span>
         {latest ? (
-          <span className="flex items-center gap-1.5 text-sm font-semibold tabular-nums text-stone-900">
+          <span className="flex items-center gap-1.5 text-sm font-semibold tabular-nums text-foreground">
             {latest.weight} lb × {latest.reps}
-            {trend === "up" && <ArrowUp className="h-3.5 w-3.5 text-emerald-600" />}
+            {trend === "up" && <ArrowUp className="h-3.5 w-3.5 text-emerald-400" />}
             {trend === "down" && (
-              <ArrowDown className="h-3.5 w-3.5 text-amber-600" />
+              <ArrowDown className="h-3.5 w-3.5 text-amber-400" />
             )}
-            {trend === "same" && <Minus className="h-3.5 w-3.5 text-stone-300" />}
+            {trend === "same" && <Minus className="h-3.5 w-3.5 text-muted-foreground" />}
           </span>
         ) : (
-          <span className="text-xs text-stone-400">No logs yet</span>
+          <span className="text-xs text-muted-foreground">No logs yet</span>
         )}
       </div>
 
       {logs.length > 0 && (
-        <ul className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-xs text-stone-400">
+        <ul className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground">
           {logs.slice(0, 3).map((l, i) => (
             <li key={i} className="tabular-nums">
-              <span className="text-stone-500">{shortDate(l.date)}</span>{" "}
+              <span className="text-muted-foreground">{shortDate(l.date)}</span>{" "}
               {l.weight}×{l.reps}
             </li>
           ))}
@@ -274,8 +274,8 @@ function ResetSection({ onReset }: { onReset: () => void }) {
   return (
     <section className="pt-2">
       {confirming ? (
-        <Card className="space-y-3 border-red-200 bg-red-50/60 p-4">
-          <p className="text-sm text-stone-700">
+        <Card className="space-y-3 border-red-500/30 bg-red-500/10 p-4">
+          <p className="text-sm text-foreground/90">
             Clear everything — logged sets, completions, week selection, and all
             nutrition logs? This can&apos;t be undone.
           </p>
@@ -292,7 +292,7 @@ function ResetSection({ onReset }: { onReset: () => void }) {
             <Button
               variant="outline"
               onClick={() => setConfirming(false)}
-              className="h-10 border-stone-200"
+              className="h-10 border-border"
             >
               Cancel
             </Button>
@@ -302,7 +302,7 @@ function ResetSection({ onReset }: { onReset: () => void }) {
         <Button
           variant="outline"
           onClick={() => setConfirming(true)}
-          className="h-10 w-full border-stone-200 text-stone-500 hover:text-red-600"
+          className="h-10 w-full border-border text-muted-foreground hover:text-red-400"
         >
           <Trash2 className="h-4 w-4" /> Reset all data
         </Button>

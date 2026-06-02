@@ -20,7 +20,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#FAFAF9",
+  themeColor: "#0C0C0F",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
@@ -39,7 +39,7 @@ export default function RootLayout({
     >
       <body className="min-h-full bg-background text-foreground">
         {children}
-        <Toaster theme="light" position="top-center" richColors={false} />
+        <Toaster theme="dark" position="top-center" richColors={false} />
       </body>
     </html>
   );

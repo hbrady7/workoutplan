@@ -76,16 +76,16 @@ export function TrainTab() {
     <div className="space-y-5">
       <header className="space-y-1">
         <div className="flex items-baseline justify-between">
-          <h1 className="text-2xl font-semibold tracking-tight text-stone-900">
+          <h1 className="text-2xl font-semibold tracking-tight text-foreground">
             Week {week}
           </h1>
-          <span className="text-sm font-medium text-emerald-700">
+          <span className="text-sm font-medium text-emerald-400">
             {prog.label}
           </span>
         </div>
-        <p className="text-sm text-stone-600">{greetingFor(todaySession, week)}</p>
+        <p className="text-sm text-muted-foreground">{greetingFor(todaySession, week)}</p>
         {nothingLoggedYet && (
-          <p className="text-xs text-stone-400">
+          <p className="text-xs text-muted-foreground">
             Fresh week. Start with Monday whenever you&apos;re ready.
           </p>
         )}
@@ -154,18 +154,18 @@ function SessionCard({
         }
       }}
       className={cn(
-        "flex cursor-pointer items-center gap-3 border-l-4 p-4 transition-colors hover:bg-stone-50",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600",
+        "flex cursor-pointer items-center gap-3 border-l-4 p-4 transition-colors hover:bg-secondary",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500",
         styles.leftBorder,
         isToday && "ring-2 ring-emerald-500/60 ring-offset-1",
       )}
     >
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
-          <span className="w-9 shrink-0 text-xs font-medium text-stone-400">
+          <span className="w-9 shrink-0 text-xs font-medium text-muted-foreground">
             {session.day}
           </span>
-          <h3 className="truncate text-sm font-semibold text-stone-900">
+          <h3 className="truncate text-sm font-semibold text-foreground">
             {cat === "intervals" ? "Intervals" : session.name}
           </h3>
           {isToday && <TodayBadge />}
@@ -173,7 +173,7 @@ function SessionCard({
             {categoryLabel[cat]}
           </Badge>
         </div>
-        <p className="mt-1 pl-11 text-xs text-stone-500">
+        <p className="mt-1 pl-11 text-xs text-muted-foreground">
           {sessionTargetSummary(session, week)}
         </p>
       </div>
@@ -185,7 +185,7 @@ function SessionCard({
           <Check className="h-3.5 w-3.5" />
         </span>
       ) : (
-        <ChevronRight className="h-4 w-4 shrink-0 text-stone-300" />
+        <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" />
       )}
     </Card>
   );
@@ -206,24 +206,24 @@ function RestCard({
   return (
     <Card
       className={cn(
-        "border-l-4 border-l-stone-300 p-4",
+        "border-l-4 border-l-zinc-600 p-4",
         isToday && "ring-2 ring-emerald-500/60 ring-offset-1",
       )}
     >
       <div className="flex items-center gap-2">
-        <span className="w-9 shrink-0 text-xs font-medium text-stone-400">
+        <span className="w-9 shrink-0 text-xs font-medium text-muted-foreground">
           {session.day}
         </span>
-        <h3 className="text-sm font-semibold text-stone-700">{session.name}</h3>
+        <h3 className="text-sm font-semibold text-foreground/90">{session.name}</h3>
         {isToday && <TodayBadge />}
         <Badge
           variant="outline"
-          className="ml-auto border-stone-200 bg-stone-100 text-stone-600"
+          className="ml-auto border-border bg-secondary text-muted-foreground"
         >
           Rest
         </Badge>
       </div>
-      <p className="mt-1 pl-11 text-xs text-stone-500">{session.note}</p>
+      <p className="mt-1 pl-11 text-xs text-muted-foreground">{session.note}</p>
       <div className="mt-3 pl-11">
         <button
           onClick={() => {
@@ -234,8 +234,8 @@ function RestCard({
           className={cn(
             "inline-flex h-9 items-center gap-1.5 rounded-lg border px-3 text-xs font-medium transition-colors",
             done
-              ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-              : "border-stone-200 bg-white text-stone-500 hover:bg-stone-50",
+              ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
+              : "border-border bg-card text-muted-foreground hover:bg-secondary",
           )}
         >
           {done && <Check className="h-3.5 w-3.5" />}

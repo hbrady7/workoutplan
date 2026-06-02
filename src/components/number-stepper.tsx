@@ -40,7 +40,7 @@ export function NumberStepper({
         type="button"
         aria-label={`Decrease ${ariaLabel ?? ""}`}
         onClick={() => bump(-1)}
-        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-stone-200 bg-white text-stone-600 transition-colors hover:bg-stone-50 active:bg-stone-100"
+        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-border bg-card text-muted-foreground transition-colors hover:bg-secondary active:bg-secondary"
       >
         <Minus className="h-4 w-4" />
       </button>
@@ -59,13 +59,13 @@ export function NumberStepper({
             : v.replace(/[^0-9]/g, "");
           onChange(cleaned);
         }}
-        className="h-11 w-full min-w-0 flex-1 rounded-lg border border-stone-200 bg-white text-center text-base font-medium tabular-nums text-stone-900 outline-none transition-colors placeholder:text-stone-300 focus-visible:border-emerald-500 focus-visible:ring-2 focus-visible:ring-emerald-500/30"
+        className="h-11 w-full min-w-0 flex-1 rounded-lg border border-border bg-card text-center text-base font-medium tabular-nums text-foreground outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-emerald-500 focus-visible:ring-2 focus-visible:ring-emerald-500/30"
       />
       <button
         type="button"
         aria-label={`Increase ${ariaLabel ?? ""}`}
         onClick={() => bump(1)}
-        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-stone-200 bg-white text-stone-600 transition-colors hover:bg-stone-50 active:bg-stone-100"
+        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-border bg-card text-muted-foreground transition-colors hover:bg-secondary active:bg-secondary"
       >
         <Plus className="h-4 w-4" />
       </button>

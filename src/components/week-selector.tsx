@@ -23,7 +23,7 @@ export function WeekSelector() {
       <div
         role="tablist"
         aria-label="Select week"
-        className="grid grid-cols-4 gap-1 rounded-xl bg-stone-100 p-1 flex-1"
+        className="grid grid-cols-4 gap-1 rounded-xl bg-secondary p-1 flex-1"
       >
         {WEEKS.map((w) => {
           const active = w === week;
@@ -35,10 +35,10 @@ export function WeekSelector() {
               onClick={() => setWeek(w)}
               className={cn(
                 "h-10 rounded-lg text-sm font-medium transition-colors",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500",
                 active
-                  ? "bg-white text-emerald-700 shadow-sm"
-                  : "text-stone-500 hover:text-stone-900",
+                  ? "bg-card text-emerald-400 shadow-sm"
+                  : "text-muted-foreground hover:text-foreground",
               )}
             >
               W{w}
@@ -46,7 +46,7 @@ export function WeekSelector() {
           );
         })}
       </div>
-      <span className="shrink-0 text-xs font-medium text-stone-500 w-12 text-right">
+      <span className="shrink-0 text-xs font-medium text-muted-foreground w-12 text-right">
         {label}
       </span>
     </div>

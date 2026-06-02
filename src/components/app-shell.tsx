@@ -23,10 +23,10 @@ export function AppShell() {
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-2xl flex-col">
       {/* Sticky header: title + Plan pull-up, week selector, desktop nav */}
-      <header className="sticky top-0 z-20 border-b border-stone-200 bg-stone-50/85 backdrop-blur">
+      <header className="sticky top-0 z-20 border-b border-border bg-background/80 backdrop-blur">
         <div className="space-y-3 px-4 pt-3 pb-3">
           <div className="flex items-center justify-between gap-2">
-            <span className="text-sm font-semibold tracking-tight text-stone-900">
+            <span className="text-sm font-semibold tracking-tight text-foreground">
               4-Week Plan
             </span>
             <div className="flex items-center gap-1.5">
@@ -58,7 +58,7 @@ export function AppShell() {
       </main>
 
       {/* Mobile bottom tab bar */}
-      <nav className="fixed inset-x-0 bottom-0 z-20 border-t border-stone-200 bg-white/95 backdrop-blur md:hidden">
+      <nav className="fixed inset-x-0 bottom-0 z-20 border-t border-border bg-card/95 backdrop-blur md:hidden">
         <div className="mx-auto flex max-w-2xl items-stretch">
           {TABS.map((t) => (
             <NavButton
@@ -97,8 +97,8 @@ function NavButton({
         className={cn(
           "flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors",
           active
-            ? "bg-emerald-50 text-emerald-700"
-            : "text-stone-500 hover:text-stone-900",
+            ? "bg-emerald-500/10 text-emerald-400"
+            : "text-muted-foreground hover:text-foreground",
         )}
       >
         <Icon className="h-4 w-4" />
@@ -112,10 +112,10 @@ function NavButton({
       aria-current={active ? "page" : undefined}
       className={cn(
         "flex flex-1 flex-col items-center justify-center gap-0.5 py-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] text-[11px] font-medium transition-colors min-h-[56px]",
-        active ? "text-emerald-700" : "text-stone-500",
+        active ? "text-emerald-400" : "text-muted-foreground",
       )}
     >
-      <Icon className={cn("h-5 w-5", active && "text-emerald-600")} />
+      <Icon className={cn("h-5 w-5", active && "text-emerald-400")} />
       {label}
     </button>
   );

@@ -118,15 +118,15 @@ export function RestTimer({
   const pct = duration > 0 ? (remaining / duration) * 100 : 0;
 
   return (
-    <div className="rounded-2xl border border-stone-200 bg-white p-4 shadow-lg">
+    <div className="rounded-2xl border border-border bg-card p-4 shadow-lg">
       <div className="mb-3 flex items-center justify-between">
-        <span className="text-xs font-semibold uppercase tracking-wide text-stone-500">
+        <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
           Rest timer
         </span>
         <button
           onClick={onClose}
           aria-label="Close rest timer"
-          className="-m-1 flex h-9 w-9 items-center justify-center rounded-md text-stone-400 hover:bg-stone-100 hover:text-stone-700"
+          className="-m-1 flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground hover:bg-secondary hover:text-foreground/90"
         >
           <X className="h-4 w-4" />
         </button>
@@ -135,14 +135,14 @@ export function RestTimer({
       <div
         className={cn(
           "text-center text-4xl font-semibold tabular-nums tracking-tight",
-          done ? "text-emerald-600" : "text-stone-900",
+          done ? "text-emerald-400" : "text-foreground",
         )}
         aria-live="polite"
       >
         {done ? "Rest done" : fmt(remaining)}
       </div>
 
-      <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-stone-100">
+      <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-secondary">
         <div
           className="h-full rounded-full bg-emerald-500 transition-[width] duration-300 ease-linear"
           style={{ width: `${done ? 100 : pct}%` }}
@@ -157,8 +157,8 @@ export function RestTimer({
             className={cn(
               "h-9 rounded-lg px-3 text-xs font-medium transition-colors",
               duration === p
-                ? "bg-emerald-50 text-emerald-700"
-                : "bg-stone-100 text-stone-500 hover:text-stone-900",
+                ? "bg-emerald-500/15 text-emerald-400"
+                : "bg-secondary text-muted-foreground hover:text-foreground",
             )}
           >
             {p}s
