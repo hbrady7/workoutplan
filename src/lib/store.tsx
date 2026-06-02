@@ -1,8 +1,9 @@
 "use client";
 
 // Single localStorage-backed store for all app state: current week, session
-// completion, per-set check states, and per-exercise weight/rep logs.
-// One namespaced key holds everything as JSON. Reads on mount, writes on change.
+// completion, and per-set logs (weight, reps, done) keyed by week/session/
+// exercise/set. One namespaced key holds everything as JSON. Reads on mount,
+// writes on every change. Tolerates missing/corrupt keys on first load.
 
 import {
   createContext,
@@ -10,14 +11,24 @@ import {
   useContext,
   useEffect,
   useMemo,
-  useRef,
   useState,
 } from "react";
 
 const STORAGE_KEY = "fwp:v1";
 
+export interface SetEntry {
+  week: number;
+  sessionId: string;
+  exerciseId: string;
+  setIndex: number;
+  weight: string; // kept as string so the input can be empty
+  reps: string;
+  done: boolean;
+  date: string | null; // ISO timestamp of when the set was marked done
+}
+
 export interface SetLog {
-  date: string; // ISO
+  date: string;
   week: number;
   weight: number;
   reps: number;
@@ -31,15 +42,13 @@ interface SessionState {
 interface PersistShape {
   currentWeek: number;
   sessions: Record<string, SessionState>; // key: `w{week}-{sessionId}`
-  setChecks: Record<string, boolean>; // key: `w{week}-{sessionId}-{exerciseId}-{setIndex}`
-  logs: Record<string, SetLog[]>; // key: exerciseId
+  sets: Record<string, SetEntry>; // key: `w{week}-{sessionId}-{exerciseId}-{setIndex}`
 }
 
 const emptyState: PersistShape = {
   currentWeek: 1,
   sessions: {},
-  setChecks: {},
-  logs: {},
+  sets: {},
 };
 
 function sessionKey(week: number, sessionId: string) {
@@ -67,26 +76,30 @@ interface StoreApi {
     completed: boolean,
   ) => void;
 
-  isSetChecked: (
+  getSet: (
     week: number,
     sessionId: string,
     exerciseId: string,
     setIndex: number,
-  ) => boolean;
-  toggleSetChecked: (
+  ) => SetEntry;
+  updateSetField: (
     week: number,
     sessionId: string,
     exerciseId: string,
     setIndex: number,
-    checked: boolean,
+    field: "weight" | "reps",
+    value: string,
+  ) => void;
+  toggleSetDone: (
+    week: number,
+    sessionId: string,
+    exerciseId: string,
+    setIndex: number,
+    done: boolean,
   ) => void;
 
-  getLogs: (exerciseId: string) => SetLog[];
-  logSet: (
-    exerciseId: string,
-    entry: { week: number; weight: number; reps: number },
-    date: string,
-  ) => void;
+  /** Completed, numeric logs for one exercise, newest first. */
+  getExerciseLogs: (exerciseId: string) => SetLog[];
 
   resetAll: () => void;
 }
@@ -97,7 +110,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<PersistShape>(emptyState);
   const [hydrated, setHydrated] = useState(false);
 
-  // Load once on mount. Guarded so we never crash on missing/corrupt keys.
+  // Load once on mount. Guarded so a missing/corrupt key never crashes.
   useEffect(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
@@ -107,8 +120,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
           currentWeek:
             typeof parsed.currentWeek === "number" ? parsed.currentWeek : 1,
           sessions: parsed.sessions ?? {},
-          setChecks: parsed.setChecks ?? {},
-          logs: parsed.logs ?? {},
+          sets: parsed.sets ?? {},
         });
       }
     } catch {
@@ -117,12 +129,10 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     setHydrated(true);
   }, []);
 
-  // Persist on every change, but only after the initial load so we don't
-  // clobber stored data with defaults.
-  const hydratedRef = useRef(false);
+  // Persist on change, but only after the initial load so defaults don't
+  // clobber stored data.
   useEffect(() => {
     if (!hydrated) return;
-    hydratedRef.current = true;
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     } catch {
@@ -150,38 +160,65 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     [],
   );
 
-  const toggleSetChecked = useCallback(
+  const updateSetField = useCallback(
     (
       week: number,
       sessionId: string,
       exerciseId: string,
       setIndex: number,
-      checked: boolean,
+      field: "weight" | "reps",
+      value: string,
     ) => {
-      setState((s) => ({
-        ...s,
-        setChecks: {
-          ...s.setChecks,
-          [setKey(week, sessionId, exerciseId, setIndex)]: checked,
-        },
-      }));
+      setState((s) => {
+        const k = setKey(week, sessionId, exerciseId, setIndex);
+        const prev: SetEntry = s.sets[k] ?? {
+          week,
+          sessionId,
+          exerciseId,
+          setIndex,
+          weight: "",
+          reps: "",
+          done: false,
+          date: null,
+        };
+        return {
+          ...s,
+          sets: { ...s.sets, [k]: { ...prev, [field]: value } },
+        };
+      });
     },
     [],
   );
 
-  const logSet = useCallback(
+  const toggleSetDone = useCallback(
     (
+      week: number,
+      sessionId: string,
       exerciseId: string,
-      entry: { week: number; weight: number; reps: number },
-      date: string,
+      setIndex: number,
+      done: boolean,
     ) => {
       setState((s) => {
-        const prev = s.logs[exerciseId] ?? [];
+        const k = setKey(week, sessionId, exerciseId, setIndex);
+        const prev: SetEntry = s.sets[k] ?? {
+          week,
+          sessionId,
+          exerciseId,
+          setIndex,
+          weight: "",
+          reps: "",
+          done: false,
+          date: null,
+        };
         return {
           ...s,
-          logs: {
-            ...s.logs,
-            [exerciseId]: [...prev, { date, ...entry }],
+          sets: {
+            ...s.sets,
+            [k]: {
+              ...prev,
+              done,
+              date: done ? new Date().toISOString() : null,
+            },
           },
         };
       });
@@ -208,14 +245,39 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       sessionCompletedAt: (week, sessionId) =>
         state.sessions[sessionKey(week, sessionId)]?.completedAt ?? null,
       setSessionComplete,
-      isSetChecked: (week, sessionId, exerciseId, setIndex) =>
-        state.setChecks[setKey(week, sessionId, exerciseId, setIndex)] ?? false,
-      toggleSetChecked,
-      getLogs: (exerciseId) => state.logs[exerciseId] ?? [],
-      logSet,
+      getSet: (week, sessionId, exerciseId, setIndex) =>
+        state.sets[setKey(week, sessionId, exerciseId, setIndex)] ?? {
+          week,
+          sessionId,
+          exerciseId,
+          setIndex,
+          weight: "",
+          reps: "",
+          done: false,
+          date: null,
+        },
+      updateSetField,
+      toggleSetDone,
+      getExerciseLogs: (exerciseId) =>
+        Object.values(state.sets)
+          .filter(
+            (e) =>
+              e.exerciseId === exerciseId &&
+              e.done &&
+              e.date !== null &&
+              e.weight.trim() !== "" &&
+              e.reps.trim() !== "",
+          )
+          .map((e) => ({
+            date: e.date as string,
+            week: e.week,
+            weight: Number(e.weight),
+            reps: Number(e.reps),
+          }))
+          .sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0)),
       resetAll,
     }),
-    [hydrated, state, setWeek, setSessionComplete, toggleSetChecked, logSet, resetAll],
+    [hydrated, state, setWeek, setSessionComplete, updateSetField, toggleSetDone, resetAll],
   );
 
   return <StoreContext.Provider value={api}>{children}</StoreContext.Provider>;
@@ -226,3 +288,6 @@ export function useStore(): StoreApi {
   if (!ctx) throw new Error("useStore must be used within <StoreProvider>");
   return ctx;
 }
+
+// Re-exported so other modules can build the same composite keys if needed.
+export { sessionKey, setKey };

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronRight } from "lucide-react";
+import { Check, ChevronRight } from "lucide-react";
 import {
   categoryLabel,
   getProgression,
@@ -70,8 +70,10 @@ function SessionCard({
   week: number;
   onOpen: () => void;
 }) {
+  const { isSessionComplete } = useStore();
   const cat = sessionCategoryForWeek(session, week);
   const styles = categoryStyles[cat];
+  const complete = isSessionComplete(week, session.id);
 
   return (
     <Card
@@ -106,7 +108,16 @@ function SessionCard({
           {sessionTargetSummary(session, week)}
         </p>
       </div>
-      <ChevronRight className="h-4 w-4 shrink-0 text-stone-300" />
+      {complete ? (
+        <span
+          className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-white"
+          aria-label="Completed"
+        >
+          <Check className="h-3.5 w-3.5" />
+        </span>
+      ) : (
+        <ChevronRight className="h-4 w-4 shrink-0 text-stone-300" />
+      )}
     </Card>
   );
 }
