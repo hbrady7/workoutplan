@@ -24,8 +24,8 @@ import {
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
+import { NumberStepper } from "@/components/number-stepper";
 import { RestTimer } from "@/components/rest-timer";
 import { cn } from "@/lib/utils";
 
@@ -214,25 +214,21 @@ function ExerciseCard({
         <span className="text-xs text-stone-400">{effort}</span>
       </div>
 
-      {/* Set rows */}
-      <div className="mt-3 space-y-1.5">
-        <div className="grid grid-cols-[2.75rem_1.75rem_1fr_1fr] items-center gap-2 px-0.5 text-[10px] font-medium uppercase tracking-wide text-stone-400">
-          <span>Set</span>
-          <span className="text-center">Done</span>
-          <span>Weight</span>
-          <span>Reps</span>
-        </div>
+      {/* Set rows — one card per set, two-column stepper entry (phone-friendly) */}
+      <div className="mt-3 space-y-2">
         {Array.from({ length: sets }).map((_, i) => {
           const entry = store.getSet(week, session.id, exercise.id, i);
           return (
             <div
               key={i}
-              className="grid grid-cols-[2.75rem_1.75rem_1fr_1fr] items-center gap-2"
+              className={cn(
+                "rounded-xl border p-2.5 transition-colors",
+                entry.done
+                  ? "border-emerald-200 bg-emerald-50/50"
+                  : "border-stone-100 bg-stone-50/50",
+              )}
             >
-              <span className="text-xs font-medium text-stone-500">
-                {i + 1}
-              </span>
-              <div className="flex justify-center">
+              <label className="flex items-center gap-2 pb-2">
                 <Checkbox
                   className="size-5"
                   checked={entry.done}
@@ -247,43 +243,60 @@ function ExerciseCard({
                   }
                   aria-label={`Mark set ${i + 1} of ${exercise.name} done`}
                 />
+                <span className="text-xs font-semibold text-stone-700">
+                  Set {i + 1}
+                </span>
+                {entry.done && (
+                  <span className="ml-auto text-[11px] font-medium text-emerald-600">
+                    logged
+                  </span>
+                )}
+              </label>
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <span className="mb-1 block text-[10px] font-medium uppercase tracking-wide text-stone-400">
+                    Weight (lb)
+                  </span>
+                  <NumberStepper
+                    value={entry.weight}
+                    onChange={(v) =>
+                      store.updateSetField(
+                        week,
+                        session.id,
+                        exercise.id,
+                        i,
+                        "weight",
+                        v,
+                      )
+                    }
+                    step={2.5}
+                    decimal
+                    placeholder="0"
+                    ariaLabel={`weight for set ${i + 1}`}
+                  />
+                </div>
+                <div>
+                  <span className="mb-1 block text-[10px] font-medium uppercase tracking-wide text-stone-400">
+                    Reps
+                  </span>
+                  <NumberStepper
+                    value={entry.reps}
+                    onChange={(v) =>
+                      store.updateSetField(
+                        week,
+                        session.id,
+                        exercise.id,
+                        i,
+                        "reps",
+                        v,
+                      )
+                    }
+                    step={1}
+                    placeholder="0"
+                    ariaLabel={`reps for set ${i + 1}`}
+                  />
+                </div>
               </div>
-              <Input
-                type="number"
-                inputMode="decimal"
-                min={0}
-                placeholder="lb"
-                value={entry.weight}
-                onChange={(e) =>
-                  store.updateSetField(
-                    week,
-                    session.id,
-                    exercise.id,
-                    i,
-                    "weight",
-                    e.target.value,
-                  )
-                }
-                className="h-9"
-              />
-              <Input
-                type="number"
-                inputMode="numeric"
-                min={0}
-                placeholder="reps"
-                value={entry.reps}
-                onChange={(e) =>
-                  store.updateSetField(
-                    week,
-                    session.id,
-                    exercise.id,
-                    i,
-                    "reps",
-                    e.target.value,
-                  )
-                }
-                className="h-9"
-              />
             </div>
           );
         })}
