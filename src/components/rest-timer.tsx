@@ -3,6 +3,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Pause, Play, RotateCcw, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useStore } from "@/lib/store";
+import { vibrate } from "@/lib/haptics";
 import { cn } from "@/lib/utils";
 
 const PRESETS = [60, 90, 120];
@@ -14,7 +16,15 @@ function fmt(secs: number) {
   return `${m}:${s.toString().padStart(2, "0")}`;
 }
 
-export function RestTimer({ onClose }: { onClose: () => void }) {
+export function RestTimer({
+  onClose,
+  autoStartSignal = 0,
+}: {
+  onClose: () => void;
+  /** Increment to auto-start a fresh countdown (e.g. when a set is checked). */
+  autoStartSignal?: number;
+}) {
+  const { autoRestTimer, setAutoRestTimer } = useStore();
   const [duration, setDuration] = useState(DEFAULT);
   const [remaining, setRemaining] = useState(DEFAULT);
   const [running, setRunning] = useState(false);
@@ -26,11 +36,7 @@ export function RestTimer({ onClose }: { onClose: () => void }) {
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const finish = useCallback(() => {
-    try {
-      navigator.vibrate?.([200, 100, 200]);
-    } catch {
-      /* unsupported */
-    }
+    vibrate([200, 100, 200]);
     try {
       const Ctx =
         window.AudioContext ||
@@ -81,6 +87,16 @@ export function RestTimer({ onClose }: { onClose: () => void }) {
     endAtRef.current = Date.now() + base * 1000;
     setRunning(true);
   };
+
+  // Auto-start a fresh countdown when the signal increments (e.g. set checked).
+  useEffect(() => {
+    if (autoStartSignal <= 0) return;
+    setDone(false);
+    setRemaining(duration);
+    endAtRef.current = Date.now() + duration * 1000;
+    setRunning(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoStartSignal]);
   const pause = () => {
     setRunning(false);
     endAtRef.current = null;
@@ -150,7 +166,17 @@ export function RestTimer({ onClose }: { onClose: () => void }) {
         ))}
       </div>
 
-      <div className="mt-4 flex gap-2">
+      <label className="mt-3 flex cursor-pointer items-center justify-center gap-2 text-xs text-muted-foreground">
+        <input
+          type="checkbox"
+          checked={autoRestTimer}
+          onChange={(e) => setAutoRestTimer(e.target.checked)}
+          className="h-4 w-4 accent-emerald-500"
+        />
+        Auto-start when I check a set
+      </label>
+
+      <div className="mt-3 flex gap-2">
         {running ? (
           <Button onClick={pause} variant="outline" className="h-11 flex-1">
             <Pause className="h-4 w-4" /> Pause

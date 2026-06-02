@@ -76,6 +76,7 @@ interface PersistShape {
   sets: Record<string, SetEntry>;
   proteinTarget: number;
   nutrition: Record<string, DayNutrition>; // key: YYYY-MM-DD (local)
+  autoRestTimer: boolean;
 }
 
 const emptyState: PersistShape = {
@@ -84,6 +85,7 @@ const emptyState: PersistShape = {
   sets: {},
   proteinTarget: 140,
   nutrition: {},
+  autoRestTimer: true,
 };
 
 function sessionKey(week: number, sessionId: string) {
@@ -134,6 +136,15 @@ interface StoreApi {
   ) => void;
 
   getExerciseLogs: (exerciseId: string) => SetLog[];
+  /** Most recent completed set for an exercise, excluding the current session. */
+  getLastEntry: (
+    exerciseId: string,
+    exclWeek: number,
+    exclSessionId: string,
+  ) => { weight: string; reps: string } | null;
+
+  autoRestTimer: boolean;
+  setAutoRestTimer: (value: boolean) => void;
 
   // Nutrition
   proteinTarget: number;
@@ -183,6 +194,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
           proteinTarget:
             typeof parsed.proteinTarget === "number" ? parsed.proteinTarget : 140,
           nutrition: parsed.nutrition ?? {},
+          autoRestTimer:
+            typeof parsed.autoRestTimer === "boolean" ? parsed.autoRestTimer : true,
         });
       }
     } catch {
@@ -407,6 +420,12 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     [mutate],
   );
 
+  const setAutoRestTimer = useCallback(
+    (value: boolean) =>
+      mutate("immediate", (s) => ({ ...s, autoRestTimer: value })),
+    [mutate],
+  );
+
   const resetAll = useCallback(() => {
     writeModeRef.current = "immediate";
     setState({ ...emptyState });
@@ -457,6 +476,29 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
             reps: Number(e.reps),
           }))
           .sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0)),
+      getLastEntry: (exerciseId, exclWeek, exclSessionId) => {
+        const candidates = Object.values(state.sets)
+          .filter(
+            (e) =>
+              e.exerciseId === exerciseId &&
+              e.done &&
+              e.date !== null &&
+              e.weight.trim() !== "" &&
+              e.reps.trim() !== "" &&
+              !(e.week === exclWeek && e.sessionId === exclSessionId),
+          )
+          .sort((a, b) =>
+            (a.date as string) < (b.date as string)
+              ? 1
+              : (a.date as string) > (b.date as string)
+                ? -1
+                : 0,
+          );
+        const top = candidates[0];
+        return top ? { weight: top.weight, reps: top.reps } : null;
+      },
+      autoRestTimer: state.autoRestTimer,
+      setAutoRestTimer,
       proteinTarget: state.proteinTarget,
       setProteinTarget,
       getNutrition: (dateStr) => state.nutrition[dateStr] ?? emptyDay(),
@@ -475,6 +517,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       setSessionComplete,
       updateSetField,
       toggleSetDone,
+      setAutoRestTimer,
       setProteinTarget,
       addProtein,
       removeProtein,
