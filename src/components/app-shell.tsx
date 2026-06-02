@@ -1,46 +1,50 @@
 "use client";
 
 import { useState } from "react";
-import { ClipboardList, Dumbbell, TrendingUp, type LucideIcon } from "lucide-react";
+import { Apple, Dumbbell, TrendingUp, type LucideIcon } from "lucide-react";
 import { WeekSelector } from "@/components/week-selector";
-import { PlanTab } from "@/components/plan-tab";
+import { PlanDrawer } from "@/components/plan-drawer";
 import { TrainTab } from "@/components/train-tab";
+import { NutritionTab } from "@/components/nutrition-tab";
 import { ProgressTab } from "@/components/progress-tab";
 import { cn } from "@/lib/utils";
 
-type TabId = "plan" | "train" | "progress";
+type TabId = "train" | "nutrition" | "progress";
 
 const TABS: { id: TabId; label: string; icon: LucideIcon }[] = [
-  { id: "plan", label: "Plan", icon: ClipboardList },
   { id: "train", label: "Train", icon: Dumbbell },
+  { id: "nutrition", label: "Nutrition", icon: Apple },
   { id: "progress", label: "Progress", icon: TrendingUp },
 ];
 
 export function AppShell() {
-  const [tab, setTab] = useState<TabId>("plan");
+  const [tab, setTab] = useState<TabId>("train");
 
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-2xl flex-col">
-      {/* Sticky header: title + week selector, plus desktop top nav */}
+      {/* Sticky header: title + Plan pull-up, week selector, desktop nav */}
       <header className="sticky top-0 z-20 border-b border-stone-200 bg-stone-50/85 backdrop-blur">
-        <div className="px-4 pt-3 pb-3 space-y-3">
-          <div className="flex items-center justify-between">
+        <div className="space-y-3 px-4 pt-3 pb-3">
+          <div className="flex items-center justify-between gap-2">
             <span className="text-sm font-semibold tracking-tight text-stone-900">
               4-Week Plan
             </span>
-            {/* Desktop top nav */}
-            <nav className="hidden gap-1 md:flex">
-              {TABS.map((t) => (
-                <NavButton
-                  key={t.id}
-                  active={tab === t.id}
-                  onClick={() => setTab(t.id)}
-                  icon={t.icon}
-                  label={t.label}
-                  variant="top"
-                />
-              ))}
-            </nav>
+            <div className="flex items-center gap-1.5">
+              {/* Desktop top nav */}
+              <nav className="hidden gap-1 md:flex">
+                {TABS.map((t) => (
+                  <NavButton
+                    key={t.id}
+                    active={tab === t.id}
+                    onClick={() => setTab(t.id)}
+                    icon={t.icon}
+                    label={t.label}
+                    variant="top"
+                  />
+                ))}
+              </nav>
+              <PlanDrawer />
+            </div>
           </div>
           <WeekSelector />
         </div>
@@ -48,8 +52,8 @@ export function AppShell() {
 
       {/* Content */}
       <main className="flex-1 px-4 pt-5 pb-28 md:pb-10">
-        {tab === "plan" && <PlanTab />}
         {tab === "train" && <TrainTab />}
+        {tab === "nutrition" && <NutritionTab />}
         {tab === "progress" && <ProgressTab />}
       </main>
 
