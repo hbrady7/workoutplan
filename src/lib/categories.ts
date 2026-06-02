@@ -1,29 +1,29 @@
 import type { Category } from "@/data/plan";
 
-// Scannable category accents, brightened for the dark theme.
-// strength = emerald · zone2 = sky · intervals = amber · rest = zinc
+// Scannable category accents (light theme).
+// strength = emerald · zone2 = sky · intervals = amber · rest = stone
 export const categoryStyles: Record<
   Category,
   { badge: string; leftBorder: string; dot: string }
 > = {
   strength: {
-    badge: "bg-emerald-500/10 text-emerald-400 border-emerald-500/30",
+    badge: "bg-emerald-50 text-emerald-700 border-emerald-200",
     leftBorder: "border-l-emerald-500",
-    dot: "bg-emerald-400",
+    dot: "bg-emerald-500",
   },
   zone2: {
-    badge: "bg-sky-500/10 text-sky-400 border-sky-500/30",
+    badge: "bg-sky-50 text-sky-700 border-sky-200",
     leftBorder: "border-l-sky-500",
-    dot: "bg-sky-400",
+    dot: "bg-sky-500",
   },
   intervals: {
-    badge: "bg-amber-500/10 text-amber-400 border-amber-500/30",
-    leftBorder: "border-l-amber-400",
-    dot: "bg-amber-400",
+    badge: "bg-amber-50 text-amber-700 border-amber-200",
+    leftBorder: "border-l-amber-500",
+    dot: "bg-amber-500",
   },
   rest: {
-    badge: "bg-zinc-500/10 text-zinc-400 border-zinc-600",
-    leftBorder: "border-l-zinc-600",
-    dot: "bg-zinc-500",
+    badge: "bg-stone-100 text-stone-600 border-stone-200",
+    leftBorder: "border-l-stone-400",
+    dot: "bg-stone-400",
   },
 };

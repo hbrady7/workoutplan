@@ -89,7 +89,7 @@ export function TrainTab() {
           <h1 className="text-2xl font-semibold tracking-tight text-foreground">
             Week {week}
           </h1>
-          <span className="text-sm font-medium text-emerald-400">
+          <span className="text-sm font-medium text-emerald-700">
             {prog.label}
           </span>
         </div>
@@ -219,7 +219,7 @@ function RestCard({
   return (
     <Card
       className={cn(
-        "border-l-4 border-l-zinc-600 p-4",
+        "border-l-4 border-l-stone-300 p-4",
         isToday && "ring-2 ring-emerald-500/60 ring-offset-1",
       )}
     >
@@ -250,7 +250,7 @@ function RestCard({
           className={cn(
             "inline-flex h-9 items-center gap-1.5 rounded-lg border px-3 text-xs font-medium transition-colors",
             done
-              ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
+              ? "border-emerald-200 bg-emerald-50 text-emerald-700"
               : "border-border bg-card text-muted-foreground hover:bg-secondary",
           )}
         >

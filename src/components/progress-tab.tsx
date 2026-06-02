@@ -187,12 +187,12 @@ function NutritionGlance({ todayStr }: { todayStr: string | null }) {
   const lines: { icon: typeof Beef; tint: string; text: string }[] = [
     {
       icon: Beef,
-      tint: "text-violet-400",
+      tint: "text-violet-600",
       text: `Protein goal hit ${proteinHits}/7 days`,
     },
     {
       icon: Droplet,
-      tint: "text-cyan-400",
+      tint: "text-cyan-600",
       text:
         waterStreak > 0
           ? `Water goal: ${waterStreak}-day streak`
@@ -200,7 +200,7 @@ function NutritionGlance({ todayStr }: { todayStr: string | null }) {
     },
     {
       icon: CandyOff,
-      tint: "text-emerald-400",
+      tint: "text-emerald-700",
       text:
         sugarStreak > 0
           ? `Low added sugar: ${sugarStreak}-day streak`
@@ -247,9 +247,9 @@ function LiftRow({ exercise, logs }: { exercise: Exercise; logs: SetLog[] }) {
         {latest ? (
           <span className="flex items-center gap-1.5 text-sm font-semibold tabular-nums text-foreground">
             {latest.weight} lb × {latest.reps}
-            {trend === "up" && <ArrowUp className="h-3.5 w-3.5 text-emerald-400" />}
+            {trend === "up" && <ArrowUp className="h-3.5 w-3.5 text-emerald-700" />}
             {trend === "down" && (
-              <ArrowDown className="h-3.5 w-3.5 text-amber-400" />
+              <ArrowDown className="h-3.5 w-3.5 text-amber-600" />
             )}
             {trend === "same" && <Minus className="h-3.5 w-3.5 text-muted-foreground" />}
           </span>
@@ -346,7 +346,7 @@ function ResetSection({ onReset }: { onReset: () => void }) {
   return (
     <section className="pt-2">
       {confirming ? (
-        <Card className="space-y-3 border-red-500/30 bg-red-500/10 p-4">
+        <Card className="space-y-3 border-red-200 bg-red-50 p-4">
           <p className="text-sm text-foreground/90">
             Clear everything — logged sets, completions, week selection, and all
             nutrition logs? This can&apos;t be undone.
@@ -374,7 +374,7 @@ function ResetSection({ onReset }: { onReset: () => void }) {
         <Button
           variant="outline"
           onClick={() => setConfirming(true)}
-          className="h-10 w-full border-border text-muted-foreground hover:text-red-400"
+          className="h-10 w-full border-border text-muted-foreground hover:text-red-600"
         >
           <Trash2 className="h-4 w-4" /> Reset all data
         </Button>

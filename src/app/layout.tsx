@@ -19,12 +19,12 @@ export const metadata: Metadata = {
   description:
     "A clean, mobile-first 4-week beginner strength + fat-loss training plan. Log your sets, check off workouts, run a rest timer.",
   manifest: "/manifest.webmanifest",
-  appleWebApp: { capable: true, statusBarStyle: "black-translucent", title: "4-Week Plan" },
+  appleWebApp: { capable: true, statusBarStyle: "default", title: "4-Week Plan" },
   icons: { icon: "/icon.svg", apple: "/icon.svg" },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0C0C0F",
+  themeColor: "#FAFAF9",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
@@ -44,7 +44,7 @@ export default function RootLayout({
       <body className="min-h-full bg-background text-foreground">
         {children}
         <PwaRegister />
-        <Toaster theme="dark" position="top-center" richColors={false} />
+        <Toaster theme="light" position="top-center" richColors={false} />
       </body>
     </html>
   );

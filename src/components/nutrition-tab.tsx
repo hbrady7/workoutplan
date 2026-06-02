@@ -106,7 +106,7 @@ function ProteinCard({ dateStr }: { dateStr: string }) {
   return (
     <Card className="space-y-4 p-5">
       <div className="flex items-center gap-2">
-        <Beef className="h-4 w-4 text-violet-400" />
+        <Beef className="h-4 w-4 text-violet-600" />
         <h2 className="text-sm font-semibold text-foreground">Protein</h2>
         <button
           onClick={() => setEditingTarget((v) => !v)}
@@ -136,7 +136,7 @@ function ProteinCard({ dateStr }: { dateStr: string }) {
           <button
             key={g}
             onClick={() => add(g)}
-            className="h-10 rounded-lg bg-violet-500/15 px-3 text-sm font-semibold text-violet-300 transition-colors hover:bg-violet-500/25 active:bg-violet-500/35"
+            className="h-10 rounded-lg bg-violet-50 px-3 text-sm font-semibold text-violet-700 transition-colors hover:bg-violet-100 active:bg-violet-200"
           >
             +{g}g
           </button>
@@ -214,7 +214,7 @@ function ProteinRing({ total, target }: { total: number; target: number }) {
           cy={size / 2}
           r={r}
           fill="none"
-          stroke="#26262b"
+          stroke="#e7e5e4"
           strokeWidth={stroke}
         />
         <circle
@@ -222,7 +222,7 @@ function ProteinRing({ total, target }: { total: number; target: number }) {
           cy={size / 2}
           r={r}
           fill="none"
-          stroke={hit ? "#34d399" : "#a78bfa"}
+          stroke={hit ? "#16a34a" : "#7c3aed"}
           strokeWidth={stroke}
           strokeLinecap="round"
           strokeDasharray={c}
@@ -311,7 +311,7 @@ function WaterCard({ dateStr, water }: { dateStr: string; water: number }) {
   return (
     <Card className="space-y-3 p-5">
       <div className="flex items-center gap-2">
-        <Droplet className="h-4 w-4 text-cyan-400" />
+        <Droplet className="h-4 w-4 text-cyan-600" />
         <h2 className="text-sm font-semibold text-foreground">Water</h2>
         <span className="ml-auto text-sm font-medium tabular-nums text-muted-foreground">
           {water} / {WATER_GOAL} cups
@@ -329,7 +329,7 @@ function WaterCard({ dateStr, water }: { dateStr: string; water: number }) {
               className={cn(
                 "h-10 flex-1 rounded-lg border transition-colors",
                 filled
-                  ? "border-cyan-500/40 bg-cyan-500/20"
+                  ? "border-cyan-300 bg-cyan-100"
                   : "border-border bg-card hover:bg-secondary",
               )}
             />
@@ -381,7 +381,7 @@ function SugarCard({
         className={cn(
           "flex w-full items-center gap-3 rounded-xl border p-3 text-left transition-colors",
           lowSugar === true
-            ? "border-emerald-500/30 bg-emerald-500/10"
+            ? "border-emerald-200 bg-emerald-50"
             : "border-border bg-card hover:bg-secondary",
         )}
       >
@@ -390,7 +390,7 @@ function SugarCard({
             "flex h-6 w-6 shrink-0 items-center justify-center rounded-full border",
             lowSugar === true
               ? "border-emerald-600 bg-emerald-600 text-white"
-              : "border-zinc-600 bg-card",
+              : "border-stone-300 bg-card",
           )}
         >
           {lowSugar === true && <span className="text-xs">✓</span>}

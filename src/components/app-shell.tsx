@@ -101,7 +101,7 @@ function NavButton({
         className={cn(
           "flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors",
           active
-            ? "bg-emerald-500/10 text-emerald-400"
+            ? "bg-emerald-50 text-emerald-700"
             : "text-muted-foreground hover:text-foreground",
         )}
       >
@@ -116,10 +116,10 @@ function NavButton({
       aria-current={active ? "page" : undefined}
       className={cn(
         "flex flex-1 flex-col items-center justify-center gap-0.5 py-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] text-[11px] font-medium transition-colors min-h-[56px]",
-        active ? "text-emerald-400" : "text-muted-foreground",
+        active ? "text-emerald-700" : "text-muted-foreground",
       )}
     >
-      <Icon className={cn("h-5 w-5", active && "text-emerald-400")} />
+      <Icon className={cn("h-5 w-5", active && "text-emerald-700")} />
       {label}
     </button>
   );

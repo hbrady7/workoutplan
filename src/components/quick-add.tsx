@@ -43,7 +43,7 @@ export function QuickAdd() {
       <button
         onClick={() => setOpen(true)}
         aria-label="Quick add protein or water"
-        className="fixed bottom-20 right-4 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-500 text-stone-950 shadow-lg shadow-emerald-500/20 transition-transform active:scale-95 md:bottom-6"
+        className="fixed bottom-20 right-4 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-600 text-white shadow-lg shadow-emerald-600/25 transition-transform active:scale-95 md:bottom-6"
       >
         <Plus className="h-6 w-6" />
       </button>
@@ -61,7 +61,7 @@ export function QuickAdd() {
 
         <div className="space-y-4 px-4 pt-3">
           <div>
-            <div className="mb-1.5 flex items-center gap-1.5 text-xs font-medium text-violet-300">
+            <div className="mb-1.5 flex items-center gap-1.5 text-xs font-medium text-violet-700">
               <Beef className="h-3.5 w-3.5" /> Protein
             </div>
             <div className="flex gap-2">
@@ -69,7 +69,7 @@ export function QuickAdd() {
                 <button
                   key={g}
                   onClick={() => addProtein(g)}
-                  className="h-12 flex-1 rounded-xl bg-violet-500/15 text-sm font-semibold text-violet-300 transition-colors active:bg-violet-500/30"
+                  className="h-12 flex-1 rounded-xl bg-violet-50 text-sm font-semibold text-violet-700 transition-colors active:bg-violet-200"
                 >
                   +{g}g
                 </button>
@@ -78,12 +78,12 @@ export function QuickAdd() {
           </div>
 
           <div>
-            <div className="mb-1.5 flex items-center gap-1.5 text-xs font-medium text-cyan-400">
+            <div className="mb-1.5 flex items-center gap-1.5 text-xs font-medium text-cyan-600">
               <Droplet className="h-3.5 w-3.5" /> Water
             </div>
             <button
               onClick={addwater}
-              className="h-12 w-full rounded-xl bg-cyan-500/15 text-sm font-semibold text-cyan-300 transition-colors active:bg-cyan-500/30"
+              className="h-12 w-full rounded-xl bg-cyan-100 text-sm font-semibold text-cyan-700 transition-colors active:bg-cyan-200"
             >
               + Add a cup
             </button>

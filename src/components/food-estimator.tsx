@@ -76,7 +76,7 @@ export function FoodEstimatorCard({ dateStr }: { dateStr: string }) {
   return (
     <Card className="space-y-3 p-5">
       <div className="flex items-center gap-2">
-        <Sparkles className="h-4 w-4 text-violet-400" />
+        <Sparkles className="h-4 w-4 text-violet-600" />
         <h2 className="text-sm font-semibold text-foreground">Describe your food</h2>
       </div>
 
@@ -114,7 +114,7 @@ export function FoodEstimatorCard({ dateStr }: { dateStr: string }) {
         <div className="space-y-3 rounded-xl border border-border bg-secondary/40 p-3">
           <div className="flex items-baseline justify-between">
             <div>
-              <span className="text-2xl font-semibold tabular-nums text-violet-300">
+              <span className="text-2xl font-semibold tabular-nums text-violet-700">
                 {result.protein_g}g
               </span>
               <span className="ml-1 text-xs text-muted-foreground">protein</span>

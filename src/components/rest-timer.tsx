@@ -135,7 +135,7 @@ export function RestTimer({
       <div
         className={cn(
           "text-center text-4xl font-semibold tabular-nums tracking-tight",
-          done ? "text-emerald-400" : "text-foreground",
+          done ? "text-emerald-700" : "text-foreground",
         )}
         aria-live="polite"
       >
@@ -157,7 +157,7 @@ export function RestTimer({
             className={cn(
               "h-9 rounded-lg px-3 text-xs font-medium transition-colors",
               duration === p
-                ? "bg-emerald-500/15 text-emerald-400"
+                ? "bg-emerald-50 text-emerald-700"
                 : "bg-secondary text-muted-foreground hover:text-foreground",
             )}
           >

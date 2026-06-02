@@ -220,7 +220,7 @@ function SessionDetailPanel({
               "h-11 flex-1",
               complete
                 ? "bg-emerald-600 text-white hover:bg-emerald-700"
-                : "bg-emerald-500 text-stone-950 hover:bg-emerald-400",
+                : "bg-emerald-600 text-white hover:bg-emerald-700",
             )}
           >
             {complete ? "Completed ✓" : "Mark session complete"}
@@ -263,7 +263,7 @@ function ExerciseCard({
           href={exercise.howToUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex shrink-0 items-center gap-1 text-xs font-medium text-emerald-400 hover:underline"
+          className="inline-flex shrink-0 items-center gap-1 text-xs font-medium text-emerald-700 hover:underline"
         >
           Watch how <ExternalLink className="h-3 w-3" />
         </a>
@@ -276,7 +276,7 @@ function ExerciseCard({
       <div className="mt-3 flex flex-wrap items-center gap-2">
         <Badge
           variant="outline"
-          className="border-emerald-500/30 bg-emerald-500/10 font-medium text-emerald-400"
+          className="border-emerald-200 bg-emerald-50 font-medium text-emerald-700"
         >
           {target}
         </Badge>
@@ -303,7 +303,7 @@ function ExerciseCard({
               className={cn(
                 "rounded-xl border p-2.5 transition-colors",
                 entry.done
-                  ? "border-emerald-500/40 bg-emerald-500/10"
+                  ? "border-emerald-300 bg-emerald-50"
                   : "border-border bg-secondary/40",
               )}
             >
@@ -320,7 +320,7 @@ function ExerciseCard({
                   Set {i + 1}
                 </span>
                 {entry.done && (
-                  <span className="ml-auto text-[11px] font-medium text-emerald-400">
+                  <span className="ml-auto text-[11px] font-medium text-emerald-700">
                     logged
                   </span>
                 )}
@@ -400,7 +400,7 @@ function CardioDetail({
           href={howToUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1 text-xs font-medium text-emerald-400 hover:underline"
+          className="inline-flex items-center gap-1 text-xs font-medium text-emerald-700 hover:underline"
         >
           Watch how <ExternalLink className="h-3 w-3" />
         </a>

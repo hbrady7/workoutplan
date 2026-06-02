@@ -37,7 +37,7 @@ export function WeekSelector() {
                 "h-10 rounded-lg text-sm font-medium transition-colors",
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500",
                 active
-                  ? "bg-card text-emerald-400 shadow-sm"
+                  ? "bg-card text-emerald-700 shadow-sm"
                   : "text-muted-foreground hover:text-foreground",
               )}
             >

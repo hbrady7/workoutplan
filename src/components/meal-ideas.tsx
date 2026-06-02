@@ -65,7 +65,7 @@ export function MealIdeasCard({ dateStr }: { dateStr: string }) {
   return (
     <Card className="space-y-3 p-5">
       <div className="flex items-center gap-2">
-        <ChefHat className="h-4 w-4 text-violet-400" />
+        <ChefHat className="h-4 w-4 text-violet-600" />
         <h2 className="text-sm font-semibold text-foreground">
           What&apos;s in your kitchen?
         </h2>
@@ -112,7 +112,7 @@ export function MealIdeasCard({ dateStr }: { dateStr: string }) {
                 <h3 className="text-sm font-semibold text-foreground">
                   {idea.name}
                 </h3>
-                <span className="shrink-0 rounded-full bg-violet-500/15 px-2 py-0.5 text-[11px] font-medium text-violet-300">
+                <span className="shrink-0 rounded-full bg-violet-50 px-2 py-0.5 text-[11px] font-medium text-violet-700">
                   ~{idea.approx_protein_g}g
                 </span>
               </div>
@@ -122,14 +122,14 @@ export function MealIdeasCard({ dateStr }: { dateStr: string }) {
                 </p>
               )}
               {idea.why_it_fits && (
-                <p className="mt-1 text-[11px] text-emerald-400">
+                <p className="mt-1 text-[11px] text-emerald-700">
                   {idea.why_it_fits}
                 </p>
               )}
               {idea.approx_protein_g > 0 && (
                 <button
                   onClick={() => logProtein(idea)}
-                  className="mt-2 inline-flex h-8 items-center gap-1 rounded-lg bg-violet-500/15 px-2.5 text-xs font-medium text-violet-300 transition-colors hover:bg-violet-500/25"
+                  className="mt-2 inline-flex h-8 items-center gap-1 rounded-lg bg-violet-50 px-2.5 text-xs font-medium text-violet-700 transition-colors hover:bg-violet-100"
                 >
                   <Plus className="h-3 w-3" /> Log ~{idea.approx_protein_g}g protein
                 </button>

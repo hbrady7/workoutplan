@@ -43,8 +43,8 @@ export function PlanDrawer() {
 
         <div className="space-y-5 overflow-y-auto px-4 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
           {/* The one rule */}
-          <Card className="border-emerald-500/30 bg-emerald-500/10 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-emerald-400">
+          <Card className="border-emerald-200 bg-emerald-50 p-4">
+            <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">
               The one rule
             </p>
             <p className="mt-2 text-sm leading-relaxed text-foreground/90">
@@ -95,7 +95,7 @@ export function PlanDrawer() {
                     <tr key={p.week} className="align-top">
                       <td className="px-3 py-2">
                         <div className="font-semibold text-foreground">W{p.week}</div>
-                        <div className="text-[10px] text-emerald-400">{p.label}</div>
+                        <div className="text-[10px] text-emerald-700">{p.label}</div>
                       </td>
                       <td className="px-2 py-2 text-foreground/90">
                         <div className="font-medium">{p.strengthSets}</div>
@@ -117,8 +117,8 @@ export function PlanDrawer() {
           </section>
 
           {/* Daily habit */}
-          <Card className="flex items-start gap-3 border-sky-500/30 bg-sky-500/10 p-4">
-            <Footprints className="mt-0.5 h-5 w-5 shrink-0 text-sky-400" />
+          <Card className="flex items-start gap-3 border-sky-200 bg-sky-50 p-4">
+            <Footprints className="mt-0.5 h-5 w-5 shrink-0 text-sky-600" />
             <p className="text-sm text-foreground/90">
               <span className="font-medium text-foreground">Daily habit · </span>
               {dailyHabit}
@@ -133,7 +133,7 @@ export function PlanDrawer() {
             <div className="space-y-2">
               {principles.map((p) => (
                 <Card key={p.source} className="p-4">
-                  <p className="text-xs font-semibold uppercase tracking-wide text-emerald-400">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">
                     {p.source}
                   </p>
                   <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
