@@ -36,10 +36,17 @@ function greetingFor(session: Session | undefined, week: number): string {
 }
 
 export function TrainTab() {
-  const { week, hydrated } = useStore();
+  const store = useStore();
+  const { week, hydrated } = store;
   const prog = getProgression(week);
   const [openId, setOpenId] = useState<string | null>(null);
   const [todayAbbr, setTodayAbbr] = useState<string | null>(null);
+
+  const nothingLoggedYet =
+    hydrated &&
+    !sessions.some(
+      (s) => s.category !== "rest" && store.isSessionComplete(week, s.id),
+    );
 
   // Resolve "today" after mount only (Date is dynamic → keep it out of render).
   useEffect(() => {
@@ -77,6 +84,11 @@ export function TrainTab() {
           </span>
         </div>
         <p className="text-sm text-stone-600">{greetingFor(todaySession, week)}</p>
+        {nothingLoggedYet && (
+          <p className="text-xs text-stone-400">
+            Fresh week. Start with Monday whenever you&apos;re ready.
+          </p>
+        )}
       </header>
 
       <div className="space-y-2.5">

@@ -1,7 +1,16 @@
 "use client";
 
-import { useState } from "react";
-import { ArrowDown, ArrowUp, Check, Minus, Trash2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import {
+  ArrowDown,
+  ArrowUp,
+  Beef,
+  CandyOff,
+  Check,
+  Droplet,
+  Minus,
+  Trash2,
+} from "lucide-react";
 import {
   getProgression,
   sessionCategoryForWeek,
@@ -12,11 +21,15 @@ import {
 } from "@/data/plan";
 import { categoryStyles } from "@/lib/categories";
 import { useStore, type SetLog } from "@/lib/store";
+import { lastNDays, toDateStr } from "@/lib/dates";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
+
+// Sessions that count toward the weekly training ratio (rest days excluded).
+const trainingSessions = sessions.filter((s) => s.category !== "rest");
 
 const liftGroups: { title: string; exercises: Exercise[] }[] = [
   { title: "Strength A", exercises: strengthA },
@@ -33,6 +46,10 @@ export function ProgressTab() {
   const { week, hydrated } = store;
   const prog = getProgression(week);
 
+  // Resolve today after mount only (keeps Date out of render → no mismatch).
+  const [todayStr, setTodayStr] = useState<string | null>(null);
+  useEffect(() => setTodayStr(toDateStr(new Date())), []);
+
   if (!hydrated) {
     return (
       <div className="space-y-6">
@@ -46,10 +63,10 @@ export function ProgressTab() {
     );
   }
 
-  const completedCount = sessions.filter((s) =>
+  const completedCount = trainingSessions.filter((s) =>
     store.isSessionComplete(week, s.id),
   ).length;
-  const pct = Math.round((completedCount / sessions.length) * 100);
+  const pct = Math.round((completedCount / trainingSessions.length) * 100);
 
   return (
     <div className="space-y-6">
@@ -67,13 +84,13 @@ export function ProgressTab() {
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-semibold text-stone-900">This week</h2>
           <span className="text-xs font-medium text-stone-500">
-            {completedCount} / {sessions.length} done
+            {completedCount} / {trainingSessions.length} done
           </span>
         </div>
         <Card className="space-y-3 p-4">
           <Progress value={pct} className="h-2" />
           <ul className="space-y-1.5">
-            {sessions.map((s) => {
+            {trainingSessions.map((s) => {
               const cat = sessionCategoryForWeek(s, week);
               const done = store.isSessionComplete(week, s.id);
               return (
@@ -122,9 +139,83 @@ export function ProgressTab() {
         ))}
       </section>
 
+      {/* Nutrition glance */}
+      <NutritionGlance todayStr={todayStr} />
+
       {/* Reset */}
       <ResetSection onReset={store.resetAll} />
     </div>
+  );
+}
+
+function NutritionGlance({ todayStr }: { todayStr: string | null }) {
+  const store = useStore();
+  const target = store.proteinTarget;
+
+  if (!todayStr) {
+    return (
+      <section className="space-y-3">
+        <h2 className="text-sm font-semibold text-stone-900">Nutrition</h2>
+        <Skeleton className="h-28 w-full" />
+      </section>
+    );
+  }
+
+  const week = lastNDays(todayStr, 7);
+  const proteinHits = week.reduce((n, d) => {
+    const day = store.getNutrition(d);
+    const total = day.proteinEntries.reduce((s, e) => s + e.grams, 0);
+    return n + (target > 0 && total >= target ? 1 : 0);
+  }, 0);
+
+  // Current streaks ending today (count back until a day misses).
+  const streak = (pred: (d: string) => boolean) => {
+    let n = 0;
+    for (let i = week.length - 1; i >= 0; i--) {
+      if (pred(week[i])) n++;
+      else break;
+    }
+    return n;
+  };
+  const waterStreak = streak((d) => store.getNutrition(d).water >= 8);
+  const sugarStreak = streak((d) => store.getNutrition(d).lowSugar === true);
+
+  const lines: { icon: typeof Beef; tint: string; text: string }[] = [
+    {
+      icon: Beef,
+      tint: "text-violet-600",
+      text: `Protein goal hit ${proteinHits}/7 days`,
+    },
+    {
+      icon: Droplet,
+      tint: "text-cyan-600",
+      text:
+        waterStreak > 0
+          ? `Water goal: ${waterStreak}-day streak`
+          : "Water goal: start a streak today",
+    },
+    {
+      icon: CandyOff,
+      tint: "text-emerald-600",
+      text:
+        sugarStreak > 0
+          ? `Low added sugar: ${sugarStreak}-day streak`
+          : "Low added sugar: start a streak today",
+    },
+  ];
+
+  return (
+    <section className="space-y-3">
+      <h2 className="text-sm font-semibold text-stone-900">Nutrition</h2>
+      <Card className="space-y-2.5 p-4">
+        {lines.map((l) => (
+          <div key={l.text} className="flex items-center gap-2.5">
+            <l.icon className={cn("h-4 w-4 shrink-0", l.tint)} />
+            <span className="text-sm text-stone-700">{l.text}</span>
+          </div>
+        ))}
+      </Card>
+    </section>
   );
 }
 
@@ -185,8 +276,8 @@ function ResetSection({ onReset }: { onReset: () => void }) {
       {confirming ? (
         <Card className="space-y-3 border-red-200 bg-red-50/60 p-4">
           <p className="text-sm text-stone-700">
-            Clear all logged sets, completions, and week selection? This can&apos;t
-            be undone.
+            Clear everything — logged sets, completions, week selection, and all
+            nutrition logs? This can&apos;t be undone.
           </p>
           <div className="flex gap-2">
             <Button
