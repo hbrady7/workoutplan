@@ -15,11 +15,13 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import {
+  abbrForDow,
   getProgression,
   sessionCategoryForWeek,
   sessions,
   strengthA,
   strengthB,
+  WEEKS,
   type Exercise,
 } from "@/data/plan";
 import { categoryStyles } from "@/lib/categories";
@@ -51,7 +53,12 @@ export function ProgressTab() {
 
   // Resolve today after mount only (keeps Date out of render → no mismatch).
   const [todayStr, setTodayStr] = useState<string | null>(null);
-  useEffect(() => setTodayStr(toDateStr(new Date())), []);
+  const [todayAbbr, setTodayAbbr] = useState<string | null>(null);
+  useEffect(() => {
+    const d = new Date();
+    setTodayStr(toDateStr(d));
+    setTodayAbbr(abbrForDow(d.getDay()));
+  }, []);
 
   if (!hydrated) {
     return (
@@ -82,7 +89,7 @@ export function ProgressTab() {
         </p>
       </header>
 
-      {/* This week checklist */}
+      {/* This week progress bar */}
       <section className="space-y-3">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-semibold text-foreground">This week</h2>
@@ -90,42 +97,13 @@ export function ProgressTab() {
             {completedCount} / {trainingSessions.length} done
           </span>
         </div>
-        <Card className="space-y-3 p-4">
+        <Card className="p-4">
           <Progress value={pct} className="h-2" />
-          <ul className="space-y-1.5">
-            {trainingSessions.map((s) => {
-              const cat = sessionCategoryForWeek(s, week);
-              const done = store.isSessionComplete(week, s.id);
-              return (
-                <li key={s.id} className="flex items-center gap-2.5">
-                  <span
-                    className={cn(
-                      "flex h-5 w-5 shrink-0 items-center justify-center rounded-full",
-                      done
-                        ? "bg-emerald-600 text-white"
-                        : "border border-border bg-card",
-                    )}
-                  >
-                    {done && <Check className="h-3 w-3" />}
-                  </span>
-                  <span
-                    className={cn(
-                      "text-sm",
-                      done ? "text-muted-foreground line-through" : "text-foreground/90",
-                    )}
-                  >
-                    {cat === "intervals" ? "Intervals" : s.name}
-                  </span>
-                  <span
-                    className={`ml-auto h-2 w-2 rounded-full ${categoryStyles[cat].dot}`}
-                    aria-hidden
-                  />
-                </li>
-              );
-            })}
-          </ul>
         </Card>
       </section>
+
+      {/* Program grid */}
+      <ProgramGrid week={week} todayAbbr={todayAbbr} todayStr={todayStr} />
 
       {/* Lifts */}
       <section className="space-y-3">
@@ -220,6 +198,124 @@ function NutritionGlance({ todayStr }: { todayStr: string | null }) {
         ))}
       </Card>
     </section>
+  );
+}
+
+function ProgramGrid({
+  week,
+  todayAbbr,
+  todayStr,
+}: {
+  week: number;
+  todayAbbr: string | null;
+  todayStr: string | null;
+}) {
+  const store = useStore();
+
+  // Total training sessions completed across the whole program.
+  let totalDone = 0;
+  for (const w of WEEKS) {
+    for (const s of trainingSessions) {
+      if (store.isSessionComplete(w, s.id)) totalDone++;
+    }
+  }
+
+  // Gentle "active" streak — consecutive days (ending today) with any nutrition
+  // activity. Supportive, never a red failure state.
+  let streak = 0;
+  if (todayStr) {
+    const days = lastNDays(todayStr, 30);
+    for (let i = days.length - 1; i >= 0; i--) {
+      const d = store.getNutrition(days[i]);
+      const active =
+        d.proteinEntries.length > 0 || d.water > 0 || d.lowSugar === true;
+      if (active) streak++;
+      else break;
+    }
+  }
+
+  return (
+    <section className="space-y-3">
+      <h2 className="text-sm font-semibold text-foreground">Program</h2>
+      <Card className="space-y-4 p-4">
+        <div className="flex items-center justify-between text-xs">
+          <span className="text-muted-foreground">
+            <span className="font-semibold text-foreground">{totalDone}</span>{" "}
+            sessions completed
+          </span>
+          {streak > 0 && (
+            <span className="rounded-full bg-emerald-50 px-2 py-0.5 font-medium text-emerald-700">
+              Active {streak} {streak === 1 ? "day" : "days"} in a row
+            </span>
+          )}
+        </div>
+
+        <div className="grid grid-cols-8 gap-1">
+          {/* Header row */}
+          <span />
+          {sessions.map((s) => (
+            <span
+              key={s.id}
+              className="text-center text-[9px] font-medium uppercase text-muted-foreground"
+            >
+              {s.day}
+            </span>
+          ))}
+
+          {/* One row per week */}
+          {WEEKS.map((w) => (
+            <ProgramRow
+              key={w}
+              week={w}
+              isSelected={w === week}
+              todayAbbr={todayAbbr}
+            />
+          ))}
+        </div>
+
+        <p className="text-[11px] text-muted-foreground">
+          Each dot is a session; filled when complete. Rest days count too — this
+          is your whole 4 weeks at a glance.
+        </p>
+      </Card>
+    </section>
+  );
+}
+
+function ProgramRow({
+  week,
+  isSelected,
+  todayAbbr,
+}: {
+  week: number;
+  isSelected: boolean;
+  todayAbbr: string | null;
+}) {
+  const store = useStore();
+  return (
+    <>
+      <span className="flex items-center text-[10px] font-semibold text-muted-foreground">
+        W{week}
+      </span>
+      {sessions.map((s) => {
+        const cat = sessionCategoryForWeek(s, week);
+        const done = store.isSessionComplete(week, s.id);
+        const isToday = isSelected && s.day === todayAbbr;
+        return (
+          <div
+            key={s.id}
+            title={`Week ${week} ${s.day} — ${s.name}${done ? " (done)" : ""}`}
+            className={cn(
+              "flex aspect-square items-center justify-center rounded-md",
+              done ? `${categoryStyles[cat].dot} text-white` : "bg-secondary",
+              isToday && "ring-2 ring-emerald-500 ring-offset-1",
+            )}
+          >
+            {done && <Check className="h-3 w-3" />}
+          </div>
+        );
+      })}
+    </>
   );
 }
 
