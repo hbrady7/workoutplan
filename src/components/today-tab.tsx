@@ -127,7 +127,9 @@ export function TodayTab({
       <p className="text-sm text-muted-foreground">
         {doneCount === 0
           ? "New week, clean slate — start whenever you're ready."
-          : `${doneCount} of ${trainingTotal} training days done this week — nice work.`}
+          : doneCount >= trainingTotal
+            ? `All ${trainingTotal} training days done this week — that's the whole plan. Excellent.`
+            : `${doneCount} of ${trainingTotal} training days done this week — nice work.`}
       </p>
 
       <SessionDetailSheet
