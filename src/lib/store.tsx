@@ -157,7 +157,27 @@ interface StoreApi {
   setSugarTally: (dateStr: string, n: number) => void;
   setCalories: (dateStr: string, value: number | null) => void;
 
+  /** Full app data as a JSON string (for backup/export). */
+  exportData: () => string;
+  /** Restore from an exported JSON string. Returns false if invalid. */
+  importData: (text: string) => boolean;
+
   resetAll: () => void;
+}
+
+// Build a clean PersistShape from arbitrary parsed JSON, tolerating missing keys.
+function sanitize(parsed: Partial<PersistShape>): PersistShape {
+  return {
+    currentWeek:
+      typeof parsed.currentWeek === "number" ? parsed.currentWeek : 1,
+    sessions: parsed.sessions ?? {},
+    sets: parsed.sets ?? {},
+    proteinTarget:
+      typeof parsed.proteinTarget === "number" ? parsed.proteinTarget : 140,
+    nutrition: parsed.nutrition ?? {},
+    autoRestTimer:
+      typeof parsed.autoRestTimer === "boolean" ? parsed.autoRestTimer : true,
+  };
 }
 
 const StoreContext = createContext<StoreApi | null>(null);
@@ -185,18 +205,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
-        const parsed = JSON.parse(raw) as Partial<PersistShape>;
-        setState({
-          currentWeek:
-            typeof parsed.currentWeek === "number" ? parsed.currentWeek : 1,
-          sessions: parsed.sessions ?? {},
-          sets: parsed.sets ?? {},
-          proteinTarget:
-            typeof parsed.proteinTarget === "number" ? parsed.proteinTarget : 140,
-          nutrition: parsed.nutrition ?? {},
-          autoRestTimer:
-            typeof parsed.autoRestTimer === "boolean" ? parsed.autoRestTimer : true,
-        });
+        setState(sanitize(JSON.parse(raw) as Partial<PersistShape>));
       }
     } catch {
       // ignore corrupt storage
@@ -426,6 +435,17 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     [mutate],
   );
 
+  const importData = useCallback((text: string): boolean => {
+    try {
+      const parsed = JSON.parse(text) as Partial<PersistShape>;
+      if (typeof parsed !== "object" || parsed === null) return false;
+      mutate("immediate", () => sanitize(parsed));
+      return true;
+    } catch {
+      return false;
+    }
+  }, [mutate]);
+
   const resetAll = useCallback(() => {
     writeModeRef.current = "immediate";
     setState({ ...emptyState });
@@ -508,6 +528,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       setLowSugar,
       setSugarTally,
       setCalories,
+      exportData: () => JSON.stringify(state, null, 2),
+      importData,
       resetAll,
     }),
     [
@@ -525,6 +547,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       setLowSugar,
       setSugarTally,
       setCalories,
+      importData,
       resetAll,
     ],
   );

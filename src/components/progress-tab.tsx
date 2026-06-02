@@ -1,16 +1,19 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ArrowDown,
   ArrowUp,
   Beef,
   CandyOff,
   Check,
+  Download,
   Droplet,
   Minus,
   Trash2,
+  Upload,
 } from "lucide-react";
+import { toast } from "sonner";
 import {
   getProgression,
   sessionCategoryForWeek,
@@ -142,7 +145,8 @@ export function ProgressTab() {
       {/* Nutrition glance */}
       <NutritionGlance todayStr={todayStr} />
 
-      {/* Reset */}
+      {/* Data: backup / restore + reset */}
+      <DataSection />
       <ResetSection onReset={store.resetAll} />
     </div>
   );
@@ -265,6 +269,74 @@ function LiftRow({ exercise, logs }: { exercise: Exercise; logs: SetLog[] }) {
         </ul>
       )}
     </Card>
+  );
+}
+
+function DataSection() {
+  const store = useStore();
+  const fileRef = useRef<HTMLInputElement | null>(null);
+
+  const exportData = () => {
+    try {
+      const blob = new Blob([store.exportData()], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "4-week-plan-backup.json";
+      a.click();
+      URL.revokeObjectURL(url);
+      toast.success("Backup downloaded.");
+    } catch {
+      toast.error("Couldn't export your data.");
+    }
+  };
+
+  const onFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = ""; // allow re-importing the same file
+    if (!file) return;
+    try {
+      const text = await file.text();
+      if (store.importData(text)) toast.success("Data restored from backup.");
+      else toast.error("That file isn't a valid backup.");
+    } catch {
+      toast.error("Couldn't read that file.");
+    }
+  };
+
+  return (
+    <section className="space-y-3">
+      <h2 className="text-sm font-semibold text-foreground">Your data</h2>
+      <Card className="space-y-3 p-4">
+        <p className="text-xs text-muted-foreground">
+          Everything is stored on this device. Back it up so you don&apos;t lose
+          your logs.
+        </p>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            onClick={exportData}
+            className="h-10 flex-1 border-border"
+          >
+            <Download className="h-4 w-4" /> Export
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => fileRef.current?.click()}
+            className="h-10 flex-1 border-border"
+          >
+            <Upload className="h-4 w-4" /> Import
+          </Button>
+        </div>
+        <input
+          ref={fileRef}
+          type="file"
+          accept="application/json,.json"
+          onChange={onFile}
+          className="hidden"
+        />
+      </Card>
+    </section>
   );
 }
 

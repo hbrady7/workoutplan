@@ -1,0 +1,19 @@
+{
+  "name": "4-Week Plan",
+  "short_name": "4-Week Plan",
+  "description": "A 4-week beginner strength + fat-loss plan with logging, nutrition, and a rest timer.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0C0C0F",
+  "theme_color": "#0C0C0F",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

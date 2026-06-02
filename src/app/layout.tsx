@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
+import { PwaRegister } from "@/components/pwa-register";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -17,6 +18,9 @@ export const metadata: Metadata = {
   title: "4-Week Plan",
   description:
     "A clean, mobile-first 4-week beginner strength + fat-loss training plan. Log your sets, check off workouts, run a rest timer.",
+  manifest: "/manifest.webmanifest",
+  appleWebApp: { capable: true, statusBarStyle: "black-translucent", title: "4-Week Plan" },
+  icons: { icon: "/icon.svg", apple: "/icon.svg" },
 };
 
 export const viewport: Viewport = {
@@ -39,6 +43,7 @@ export default function RootLayout({
     >
       <body className="min-h-full bg-background text-foreground">
         {children}
+        <PwaRegister />
         <Toaster theme="dark" position="top-center" richColors={false} />
       </body>
     </html>

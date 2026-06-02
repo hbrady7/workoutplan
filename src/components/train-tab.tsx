@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Check, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
+import { vibrate } from "@/lib/haptics";
 import {
   abbrForDow,
   categoryLabel,
@@ -48,10 +49,19 @@ export function TrainTab() {
       (s) => s.category !== "rest" && store.isSessionComplete(week, s.id),
     );
 
+  const todayRef = useRef<HTMLDivElement | null>(null);
+
   // Resolve "today" after mount only (Date is dynamic → keep it out of render).
   useEffect(() => {
     setTodayAbbr(abbrForDow(new Date().getDay()));
   }, []);
+
+  // Open to today: gently bring today's card into view once it's known.
+  useEffect(() => {
+    if (todayAbbr && todayRef.current) {
+      todayRef.current.scrollIntoView({ block: "center" });
+    }
+  }, [todayAbbr]);
 
   const openSession = sessions.find((s) => s.id === openId) ?? null;
   const todaySession = sessions.find((s) => s.day === todayAbbr);
@@ -94,16 +104,19 @@ export function TrainTab() {
       <div className="space-y-2.5">
         {sessions.map((s) => {
           const isToday = s.day === todayAbbr;
-          return sessionCategoryForWeek(s, week) === "rest" ? (
-            <RestCard key={s.id} session={s} week={week} isToday={isToday} />
-          ) : (
-            <SessionCard
-              key={s.id}
-              session={s}
-              week={week}
-              isToday={isToday}
-              onOpen={() => setOpenId(s.id)}
-            />
+          return (
+            <div key={s.id} ref={isToday ? todayRef : undefined} className="scroll-mt-24">
+              {sessionCategoryForWeek(s, week) === "rest" ? (
+                <RestCard session={s} week={week} isToday={isToday} />
+              ) : (
+                <SessionCard
+                  session={s}
+                  week={week}
+                  isToday={isToday}
+                  onOpen={() => setOpenId(s.id)}
+                />
+              )}
+            </div>
           );
         })}
       </div>
@@ -229,7 +242,10 @@ function RestCard({
           onClick={() => {
             const next = !done;
             setSessionComplete(week, session.id, next);
-            if (next) toast.success("Nice — easy day logged.");
+            if (next) {
+              vibrate(15);
+              toast.success("Nice — easy day logged.");
+            }
           }}
           className={cn(
             "inline-flex h-9 items-center gap-1.5 rounded-lg border px-3 text-xs font-medium transition-colors",

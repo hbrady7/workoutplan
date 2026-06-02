@@ -7,6 +7,7 @@ import { PlanDrawer } from "@/components/plan-drawer";
 import { TrainTab } from "@/components/train-tab";
 import { NutritionTab } from "@/components/nutrition-tab";
 import { ProgressTab } from "@/components/progress-tab";
+import { QuickAdd } from "@/components/quick-add";
 import { cn } from "@/lib/utils";
 
 type TabId = "train" | "nutrition" | "progress";
@@ -56,6 +57,9 @@ export function AppShell() {
         {tab === "nutrition" && <NutritionTab />}
         {tab === "progress" && <ProgressTab />}
       </main>
+
+      {/* Global quick-add for protein & water, on any tab */}
+      <QuickAdd />
 
       {/* Mobile bottom tab bar */}
       <nav className="fixed inset-x-0 bottom-0 z-20 border-t border-border bg-card/95 backdrop-blur md:hidden">
