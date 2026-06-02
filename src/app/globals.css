@@ -122,10 +122,21 @@
   * {
     @apply border-border outline-ring/50;
   }
-  body {
-    @apply bg-background text-foreground;
-  }
   html {
     @apply font-sans;
+    /* Smooth momentum scrolling; never scroll sideways. */
+    -webkit-text-size-adjust: 100%;
+    overflow-x: hidden;
+  }
+  body {
+    @apply bg-background text-foreground;
+    overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+  }
+  /* Inputs at 16px on mobile so iOS Safari never auto-zooms on focus. */
+  input,
+  textarea,
+  select {
+    font-size: 16px;
   }
 }

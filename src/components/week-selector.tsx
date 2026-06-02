@@ -2,11 +2,21 @@
 
 import { WEEKS, getProgression } from "@/data/plan";
 import { useStore } from "@/lib/store";
+import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
 export function WeekSelector() {
-  const { week, setWeek } = useStore();
+  const { week, setWeek, hydrated } = useStore();
   const label = getProgression(week).label;
+
+  if (!hydrated) {
+    return (
+      <div className="flex items-center justify-between gap-3">
+        <Skeleton className="h-10 flex-1 rounded-xl" />
+        <Skeleton className="h-4 w-12 rounded-md" />
+      </div>
+    );
+  }
 
   return (
     <div className="flex items-center justify-between gap-3">
@@ -24,7 +34,7 @@ export function WeekSelector() {
               aria-selected={active}
               onClick={() => setWeek(w)}
               className={cn(
-                "h-9 rounded-lg text-sm font-medium transition-colors",
+                "h-10 rounded-lg text-sm font-medium transition-colors",
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600",
                 active
                   ? "bg-white text-emerald-700 shadow-sm"

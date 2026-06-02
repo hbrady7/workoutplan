@@ -15,6 +15,7 @@ import { useStore, type SetLog } from "@/lib/store";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
 const liftGroups: { title: string; exercises: Exercise[] }[] = [
@@ -29,8 +30,21 @@ function shortDate(iso: string) {
 
 export function ProgressTab() {
   const store = useStore();
-  const { week } = store;
+  const { week, hydrated } = store;
   const prog = getProgression(week);
+
+  if (!hydrated) {
+    return (
+      <div className="space-y-6">
+        <div className="space-y-2">
+          <Skeleton className="h-7 w-36" />
+          <Skeleton className="h-4 w-28" />
+        </div>
+        <Skeleton className="h-48 w-full" />
+        <Skeleton className="h-40 w-full" />
+      </div>
+    );
+  }
 
   const completedCount = sessions.filter((s) =>
     store.isSessionComplete(week, s.id),

@@ -15,14 +15,31 @@ import { useStore } from "@/lib/store";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { SessionDetailSheet } from "@/components/session-detail";
+import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
 export function TrainTab() {
-  const { week } = useStore();
+  const { week, hydrated } = useStore();
   const prog = getProgression(week);
   const [openId, setOpenId] = useState<string | null>(null);
 
   const openSession = sessions.find((s) => s.id === openId) ?? null;
+
+  if (!hydrated) {
+    return (
+      <div className="space-y-5">
+        <div className="space-y-2">
+          <Skeleton className="h-7 w-32" />
+          <Skeleton className="h-4 w-64" />
+        </div>
+        <div className="space-y-2.5">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <Skeleton key={i} className="h-[72px] w-full" />
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-5">
