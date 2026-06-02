@@ -11,7 +11,7 @@ import {
   getProgression,
   sessionCategoryForWeek,
   sessions,
-  sessionTargetSummary,
+  sessionWhatIsIt,
   type Session,
 } from "@/data/plan";
 import { categoryStyles } from "@/lib/categories";
@@ -20,6 +20,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SessionDetailSheet } from "@/components/session-detail";
+import { WeekStrip } from "@/components/week-strip";
 import { cn } from "@/lib/utils";
 
 function greetingFor(session: Session | undefined, week: number): string {
@@ -100,6 +101,12 @@ export function TrainTab() {
           </p>
         )}
       </header>
+
+      <WeekStrip
+        week={week}
+        todayAbbr={todayAbbr}
+        onOpenDay={(id) => setOpenId(id)}
+      />
 
       <div className="space-y-2.5">
         {sessions.map((s) => {
@@ -187,7 +194,7 @@ function SessionCard({
           </Badge>
         </div>
         <p className="mt-1 pl-11 text-xs text-muted-foreground">
-          {sessionTargetSummary(session, week)}
+          {sessionWhatIsIt(session, week)}
         </p>
       </div>
       {complete ? (

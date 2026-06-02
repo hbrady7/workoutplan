@@ -351,6 +351,29 @@ export function abbrForDow(dow: number): DayAbbr | null {
   return DOW_TO_ABBR[dow] ?? null;
 }
 
+/** Plain-language one-liner describing what a day's session actually is. */
+export function sessionWhatIsIt(session: Session, week: number): string {
+  const prog = getProgression(week);
+  switch (session.category) {
+    case "strength":
+      return `Full-body strength · ${prog.strengthSets}`;
+    case "rest":
+      return session.id === "friday-rest"
+        ? "Recovery day — rest is part of the plan"
+        : "Easy day — rest or a gentle walk";
+    case "zone2":
+      if (session.id === "zone2-thu" && prog.thursdayIsIntervals) {
+        return "Intervals — 4 × 3 min hard / 3 min easy";
+      }
+      if (session.id === "saturday") {
+        return `Long easy cardio outside, ~${prog.saturdayMinutes} min`;
+      }
+      return `Conversational-pace cardio, ~${prog.zone2Minutes} min`;
+    default:
+      return "";
+  }
+}
+
 /** Short target line shown on a session card / detail header for a given week. */
 export function sessionTargetSummary(session: Session, week: number): string {
   const prog = getProgression(week);

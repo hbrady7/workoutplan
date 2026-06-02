@@ -63,17 +63,20 @@ function SessionDetailPanel({
 
   const cat = sessionCategoryForWeek(session, week);
   const isStrength = session.category === "strength";
+  const isRest = cat === "rest";
   const prog = getProgression(week);
   const complete = store.isSessionComplete(week, session.id);
 
   const title = isStrength || cat !== "intervals" ? session.name : "Intervals";
   const targetLine = isStrength
     ? prog.strengthSets
-    : cat === "intervals"
-      ? "4 × 3 min hard / 3 min easy"
-      : session.id === "saturday"
-        ? `${prog.saturdayMinutes} min`
-        : `${prog.zone2Minutes} min`;
+    : isRest
+      ? "Rest & recovery"
+      : cat === "intervals"
+        ? "4 × 3 min hard / 3 min easy"
+        : session.id === "saturday"
+          ? `${prog.saturdayMinutes} min`
+          : `${prog.zone2Minutes} min`;
 
   // Keep the screen awake while logging (released automatically on unmount).
   useWakeLock(true);
@@ -138,6 +141,9 @@ function SessionDetailPanel({
             <ChevronLeft className="h-5 w-5" />
           </button>
           <div className="min-w-0 flex-1">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-emerald-700">
+              {dayFull(session.day)}
+            </p>
             <div className="flex items-center gap-2">
               <h2 className="truncate text-base font-semibold text-foreground">
                 {title}
@@ -146,9 +152,7 @@ function SessionDetailPanel({
                 {categoryLabel[cat]}
               </Badge>
             </div>
-            <p className="truncate text-xs text-muted-foreground">
-              {dayFull(session.day)} · {targetLine}
-            </p>
+            <p className="truncate text-xs text-muted-foreground">{targetLine}</p>
           </div>
         </div>
 
@@ -186,6 +190,16 @@ function SessionDetailPanel({
                   />
                 </div>
               ))}
+            </div>
+          ) : isRest ? (
+            <div className="space-y-3 rounded-2xl border border-border bg-card p-4">
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                {session.note}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Rest days are part of the plan — recovery is when you adapt. Mark
+                it done below if you got an easy walk in.
+              </p>
             </div>
           ) : (
             <CardioDetail session={session} week={week} cat={cat} />
