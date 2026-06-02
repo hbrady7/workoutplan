@@ -23,6 +23,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { NumberStepper } from "@/components/number-stepper";
+import { FoodEstimatorCard } from "@/components/food-estimator";
 import { cn } from "@/lib/utils";
 
 const QUICK_ADDS = [20, 30, 40];
@@ -78,6 +79,7 @@ export function NutritionTab() {
       </div>
 
       <ProteinCard dateStr={dateStr} />
+      <FoodEstimatorCard dateStr={dateStr} />
       <WaterCard dateStr={dateStr} water={day.water} />
       <SugarCard dateStr={dateStr} lowSugar={day.lowSugar} tally={day.sugarTally} />
       <CaloriesCard dateStr={dateStr} calories={day.calories} />
