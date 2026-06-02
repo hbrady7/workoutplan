@@ -127,7 +127,7 @@ function SessionDetailPanel({
 
   return (
     <div className="fixed inset-0 z-50 bg-background">
-      <div className="mx-auto flex h-dvh w-full max-w-md flex-col md:max-w-lg">
+      <div className="relative mx-auto flex h-dvh w-full max-w-md flex-col md:max-w-lg">
         {/* Top bar */}
         <div className="flex shrink-0 items-center gap-2 border-b border-border px-3 pt-[max(0.75rem,env(safe-area-inset-top))] pb-3">
           <button
@@ -194,7 +194,7 @@ function SessionDetailPanel({
 
         {/* Rest timer overlay */}
         {showTimer && (
-          <div className="absolute inset-x-3 bottom-[5.5rem] z-10 mx-auto max-w-md">
+          <div className="absolute inset-x-3 bottom-[5.5rem] z-10">
             <RestTimer
               onClose={() => setShowTimer(false)}
               autoStartSignal={autoSignal}
