@@ -1,9 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Check, ChevronRight } from "lucide-react";
+import { toast } from "sonner";
 import {
+  abbrForDow,
   categoryLabel,
+  dayFull,
   getProgression,
   sessionCategoryForWeek,
   sessions,
@@ -14,26 +17,47 @@ import { categoryStyles } from "@/lib/categories";
 import { useStore } from "@/lib/store";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { SessionDetailSheet } from "@/components/session-detail";
 import { Skeleton } from "@/components/ui/skeleton";
+import { SessionDetailSheet } from "@/components/session-detail";
 import { cn } from "@/lib/utils";
+
+function greetingFor(session: Session | undefined, week: number): string {
+  if (!session) return "Here's your week. Tap any day to get going.";
+  const full = dayFull(session.day);
+  const cat = sessionCategoryForWeek(session, week);
+  if (cat === "rest") return "Rest day. Recover well — you earned it.";
+  if (cat === "intervals")
+    return `Happy ${full} — intervals today. Warm up, then push.`;
+  if (session.category === "strength")
+    return `Happy ${full} — ${session.name} today. Let's get it.`;
+  if (session.id === "saturday")
+    return `Happy ${full} — long easy one outside today.`;
+  return `Happy ${full} — easy Zone 2 today. Keep it conversational.`;
+}
 
 export function TrainTab() {
   const { week, hydrated } = useStore();
   const prog = getProgression(week);
   const [openId, setOpenId] = useState<string | null>(null);
+  const [todayAbbr, setTodayAbbr] = useState<string | null>(null);
+
+  // Resolve "today" after mount only (Date is dynamic → keep it out of render).
+  useEffect(() => {
+    setTodayAbbr(abbrForDow(new Date().getDay()));
+  }, []);
 
   const openSession = sessions.find((s) => s.id === openId) ?? null;
+  const todaySession = sessions.find((s) => s.day === todayAbbr);
 
   if (!hydrated) {
     return (
       <div className="space-y-5">
         <div className="space-y-2">
-          <Skeleton className="h-7 w-32" />
+          <Skeleton className="h-7 w-40" />
           <Skeleton className="h-4 w-64" />
         </div>
         <div className="space-y-2.5">
-          {Array.from({ length: 5 }).map((_, i) => (
+          {Array.from({ length: 7 }).map((_, i) => (
             <Skeleton key={i} className="h-[72px] w-full" />
           ))}
         </div>
@@ -52,20 +76,24 @@ export function TrainTab() {
             {prog.label}
           </span>
         </div>
-        <p className="text-sm text-stone-500">
-          Tap a session to see cues, targets, and log your work.
-        </p>
+        <p className="text-sm text-stone-600">{greetingFor(todaySession, week)}</p>
       </header>
 
       <div className="space-y-2.5">
-        {sessions.map((s) => (
-          <SessionCard
-            key={s.id}
-            session={s}
-            week={week}
-            onOpen={() => setOpenId(s.id)}
-          />
-        ))}
+        {sessions.map((s) => {
+          const isToday = s.day === todayAbbr;
+          return sessionCategoryForWeek(s, week) === "rest" ? (
+            <RestCard key={s.id} session={s} week={week} isToday={isToday} />
+          ) : (
+            <SessionCard
+              key={s.id}
+              session={s}
+              week={week}
+              isToday={isToday}
+              onOpen={() => setOpenId(s.id)}
+            />
+          );
+        })}
       </div>
 
       <SessionDetailSheet
@@ -78,13 +106,23 @@ export function TrainTab() {
   );
 }
 
+function TodayBadge() {
+  return (
+    <span className="rounded-full bg-emerald-600 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">
+      Today
+    </span>
+  );
+}
+
 function SessionCard({
   session,
   week,
+  isToday,
   onOpen,
 }: {
   session: Session;
   week: number;
+  isToday: boolean;
   onOpen: () => void;
 }) {
   const { isSessionComplete } = useStore();
@@ -107,6 +145,7 @@ function SessionCard({
         "flex cursor-pointer items-center gap-3 border-l-4 p-4 transition-colors hover:bg-stone-50",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600",
         styles.leftBorder,
+        isToday && "ring-2 ring-emerald-500/60 ring-offset-1",
       )}
     >
       <div className="min-w-0 flex-1">
@@ -117,6 +156,7 @@ function SessionCard({
           <h3 className="truncate text-sm font-semibold text-stone-900">
             {cat === "intervals" ? "Intervals" : session.name}
           </h3>
+          {isToday && <TodayBadge />}
           <Badge variant="outline" className={cn("ml-auto", styles.badge)}>
             {categoryLabel[cat]}
           </Badge>
@@ -135,6 +175,61 @@ function SessionCard({
       ) : (
         <ChevronRight className="h-4 w-4 shrink-0 text-stone-300" />
       )}
+    </Card>
+  );
+}
+
+function RestCard({
+  session,
+  week,
+  isToday,
+}: {
+  session: Session;
+  week: number;
+  isToday: boolean;
+}) {
+  const { isSessionComplete, setSessionComplete } = useStore();
+  const done = isSessionComplete(week, session.id);
+
+  return (
+    <Card
+      className={cn(
+        "border-l-4 border-l-stone-300 p-4",
+        isToday && "ring-2 ring-emerald-500/60 ring-offset-1",
+      )}
+    >
+      <div className="flex items-center gap-2">
+        <span className="w-9 shrink-0 text-xs font-medium text-stone-400">
+          {session.day}
+        </span>
+        <h3 className="text-sm font-semibold text-stone-700">{session.name}</h3>
+        {isToday && <TodayBadge />}
+        <Badge
+          variant="outline"
+          className="ml-auto border-stone-200 bg-stone-100 text-stone-600"
+        >
+          Rest
+        </Badge>
+      </div>
+      <p className="mt-1 pl-11 text-xs text-stone-500">{session.note}</p>
+      <div className="mt-3 pl-11">
+        <button
+          onClick={() => {
+            const next = !done;
+            setSessionComplete(week, session.id, next);
+            if (next) toast.success("Nice — easy day logged.");
+          }}
+          className={cn(
+            "inline-flex h-9 items-center gap-1.5 rounded-lg border px-3 text-xs font-medium transition-colors",
+            done
+              ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+              : "border-stone-200 bg-white text-stone-500 hover:bg-stone-50",
+          )}
+        >
+          {done && <Check className="h-3.5 w-3.5" />}
+          {done ? "Easy walk done" : "Mark easy walk done"}
+        </button>
+      </div>
     </Card>
   );
 }

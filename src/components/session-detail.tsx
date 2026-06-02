@@ -2,8 +2,10 @@
 
 import { useState } from "react";
 import { Check, ExternalLink, Info, Timer } from "lucide-react";
+import { toast } from "sonner";
 import {
   categoryLabel,
+  dayFull,
   getProgression,
   intervalsHowToUrl,
   intervalsNote,
@@ -113,7 +115,11 @@ function SessionDetailContent({
           </Button>
         )}
         <Button
-          onClick={() => store.setSessionComplete(week, session.id, !complete)}
+          onClick={() => {
+            const next = !complete;
+            store.setSessionComplete(week, session.id, next);
+            if (next) toast.success(`Nice work — ${dayFull(session.day)} done.`);
+          }}
           className={cn(
             "h-11 flex-1",
             complete

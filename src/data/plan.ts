@@ -197,19 +197,19 @@ export const sessions: Session[] = [
     exercises: strengthA,
   },
   {
-    id: "strengthB",
-    name: "Strength B",
-    category: "strength",
-    day: "Wed",
-    exercises: strengthB,
-  },
-  {
     id: "zone2-tue",
     name: "Zone 2 cardio",
     category: "zone2",
     day: "Tue",
     note: zone2Note,
     howToUrl: zone2HowToUrl,
+  },
+  {
+    id: "strengthB",
+    name: "Strength B",
+    category: "strength",
+    day: "Wed",
+    exercises: strengthB,
   },
   {
     id: "zone2-thu",
@@ -220,12 +220,26 @@ export const sessions: Session[] = [
     howToUrl: zone2HowToUrl,
   },
   {
+    id: "friday-rest",
+    name: "Rest / travel",
+    category: "rest",
+    day: "Fri",
+    note: "Recovery day — light movement is fine, but rest is the work. Your muscles grow now.",
+  },
+  {
     id: "saturday",
     name: "Long outdoor Zone 2",
     category: "zone2",
     day: "Sat",
     note: saturdayNote,
     howToUrl: zone2HowToUrl,
+  },
+  {
+    id: "sunday-rest",
+    name: "Rest or easy walk",
+    category: "rest",
+    day: "Sun",
+    note: "Easy day. A relaxed walk if you feel like it — otherwise just rest.",
   },
 ];
 
@@ -307,9 +321,42 @@ export const categoryLabel: Record<Category, string> = {
   rest: "Rest",
 };
 
+// Day ordering + names. JS Date.getDay(): 0=Sun … 6=Sat.
+export const DAY_ORDER = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] as const;
+export type DayAbbr = (typeof DAY_ORDER)[number];
+
+const DAY_FULL: Record<DayAbbr, string> = {
+  Mon: "Monday",
+  Tue: "Tuesday",
+  Wed: "Wednesday",
+  Thu: "Thursday",
+  Fri: "Friday",
+  Sat: "Saturday",
+  Sun: "Sunday",
+};
+const DOW_TO_ABBR: Record<number, DayAbbr> = {
+  0: "Sun",
+  1: "Mon",
+  2: "Tue",
+  3: "Wed",
+  4: "Thu",
+  5: "Fri",
+  6: "Sat",
+};
+
+export function dayFull(abbr: string): string {
+  return DAY_FULL[abbr as DayAbbr] ?? abbr;
+}
+export function abbrForDow(dow: number): DayAbbr | null {
+  return DOW_TO_ABBR[dow] ?? null;
+}
+
 /** Short target line shown on a session card / detail header for a given week. */
 export function sessionTargetSummary(session: Session, week: number): string {
   const prog = getProgression(week);
+  if (session.category === "rest") {
+    return session.id === "friday-rest" ? "Rest / travel" : "Rest or easy walk";
+  }
   if (session.category === "strength") {
     return `${prog.strengthSets} · ${prog.effort}`;
   }
