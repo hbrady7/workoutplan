@@ -306,3 +306,19 @@ export const categoryLabel: Record<Category, string> = {
   intervals: "Intervals",
   rest: "Rest",
 };
+
+/** Short target line shown on a session card / detail header for a given week. */
+export function sessionTargetSummary(session: Session, week: number): string {
+  const prog = getProgression(week);
+  if (session.category === "strength") {
+    return `${prog.strengthSets} · ${prog.effort}`;
+  }
+  if (session.id === "saturday") {
+    return `${prog.saturdayMinutes} min · easy outdoor`;
+  }
+  if (session.id === "zone2-thu" && prog.thursdayIsIntervals) {
+    return "4 × 3 min hard / 3 min easy · first intervals";
+  }
+  // zone2-tue and zone2-thu (non-interval weeks)
+  return `${prog.zone2Minutes} min · conversational`;
+}
