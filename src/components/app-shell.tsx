@@ -1,25 +1,33 @@
 "use client";
 
 import { useState } from "react";
-import { Apple, Dumbbell, TrendingUp, type LucideIcon } from "lucide-react";
+import {
+  Apple,
+  CalendarDays,
+  Dumbbell,
+  TrendingUp,
+  type LucideIcon,
+} from "lucide-react";
 import { WeekSelector } from "@/components/week-selector";
 import { PlanDrawer } from "@/components/plan-drawer";
+import { TodayTab } from "@/components/today-tab";
 import { TrainTab } from "@/components/train-tab";
 import { NutritionTab } from "@/components/nutrition-tab";
 import { ProgressTab } from "@/components/progress-tab";
 import { QuickAdd } from "@/components/quick-add";
 import { cn } from "@/lib/utils";
 
-type TabId = "train" | "nutrition" | "progress";
+type TabId = "today" | "train" | "nutrition" | "progress";
 
 const TABS: { id: TabId; label: string; icon: LucideIcon }[] = [
+  { id: "today", label: "Today", icon: CalendarDays },
   { id: "train", label: "Train", icon: Dumbbell },
   { id: "nutrition", label: "Nutrition", icon: Apple },
   { id: "progress", label: "Progress", icon: TrendingUp },
 ];
 
 export function AppShell() {
-  const [tab, setTab] = useState<TabId>("train");
+  const [tab, setTab] = useState<TabId>("today");
 
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-2xl flex-col">
@@ -53,6 +61,7 @@ export function AppShell() {
 
       {/* Content */}
       <main className="flex-1 px-4 pt-5 pb-28 md:pb-10">
+        {tab === "today" && <TodayTab onOpenNutrition={() => setTab("nutrition")} />}
         {tab === "train" && <TrainTab />}
         {tab === "nutrition" && <NutritionTab />}
         {tab === "progress" && <ProgressTab />}

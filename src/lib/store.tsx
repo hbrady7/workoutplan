@@ -136,6 +136,8 @@ interface StoreApi {
   ) => void;
 
   getExerciseLogs: (exerciseId: string) => SetLog[];
+  /** True if any set in this session/week has been touched (for Continue state). */
+  hasLoggedSets: (week: number, sessionId: string) => boolean;
   /** Most recent completed set for an exercise, excluding the current session. */
   getLastEntry: (
     exerciseId: string,
@@ -496,6 +498,13 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
             reps: Number(e.reps),
           }))
           .sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0)),
+      hasLoggedSets: (week, sessionId) =>
+        Object.values(state.sets).some(
+          (e) =>
+            e.week === week &&
+            e.sessionId === sessionId &&
+            (e.done || e.weight.trim() !== "" || e.reps.trim() !== ""),
+        ),
       getLastEntry: (exerciseId, exclWeek, exclSessionId) => {
         const candidates = Object.values(state.sets)
           .filter(
